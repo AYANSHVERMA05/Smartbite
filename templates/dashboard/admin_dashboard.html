@@ -1,0 +1,267 @@
+{% extends 'base.html' %}
+
+{% block title %}System Administrator Dashboard - SmartBite{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Clean Minimal Header -->
+    <div class="card sb-card p-4 mb-4 border bg-white">
+        <div class="d-flex flex-wrap justify-content-between align-items-center">
+            <div>
+                <h3 class="fw-bold mb-1">Administrator Analytics & Operations</h3>
+                <p class="text-secondary small mb-0">Platform overview, outlet approvals, campus orders, and real-time metrics.</p>
+            </div>
+            <div class="d-flex gap-2 mt-3 mt-md-0">
+                <a href="/admin/" target="_blank" class="btn btn-outline-secondary btn-sm">
+                    <i class="fa-solid fa-database me-1"></i> Django Admin
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Platform KPI Metric Cards -->
+    <div class="row g-3 mb-4">
+        <div class="col-lg-2 col-md-4 col-6">
+            <div class="stat-box green h-100 p-3">
+                <small class="text-muted d-block fw-semibold" style="font-size: 0.72rem;">TOTAL REVENUE</small>
+                <span class="stat-number fs-4 text-success">₹{{ total_revenue }}</span>
+            </div>
+        </div>
+        <div class="col-lg-2 col-md-4 col-6">
+            <div class="stat-box h-100 p-3">
+                <small class="text-muted d-block fw-semibold" style="font-size: 0.72rem;">TOTAL ORDERS</small>
+                <span class="stat-number fs-4">{{ total_orders }}</span>
+            </div>
+        </div>
+        <div class="col-lg-2 col-md-4 col-6">
+            <div class="stat-box blue h-100 p-3">
+                <small class="text-muted d-block fw-semibold" style="font-size: 0.72rem;">CUSTOMERS</small>
+                <span class="stat-number fs-4">{{ total_customers }}</span>
+            </div>
+        </div>
+        <div class="col-lg-2 col-md-4 col-6">
+            <div class="stat-box purple h-100 p-3">
+                <small class="text-muted d-block fw-semibold" style="font-size: 0.72rem;">RESTAURANTS</small>
+                <span class="stat-number fs-4">{{ total_restaurants }}</span>
+            </div>
+        </div>
+        <div class="col-lg-2 col-md-4 col-6">
+            <div class="stat-box blue h-100 p-3">
+                <small class="text-muted d-block fw-semibold" style="font-size: 0.72rem;">MESS SUBSCRIPTIONS</small>
+                <span class="stat-number fs-4 text-info">{{ active_subscriptions_count }}</span>
+            </div>
+        </div>
+        <div class="col-lg-2 col-md-4 col-6">
+            <div class="stat-box h-100 p-3" style="border-left-color: #ef4444;">
+                <small class="text-muted d-block fw-semibold" style="font-size: 0.72rem;">SURPLUS RESCUED</small>
+                <span class="stat-number fs-4 text-danger">{{ surplus_saved_count }}</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chart.js Visualizations Section -->
+    <div class="row g-4 mb-4">
+        <!-- Revenue Trend (Line Chart) -->
+        <div class="col-lg-7">
+            <div class="card sb-card p-4 h-100">
+                <h5 class="fw-bold mb-3"><i class="fa-solid fa-chart-line text-success me-2"></i>Campus Revenue Trend</h5>
+                <div style="height: 250px;">
+                    <canvas id="revenueChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Order Status Distribution (Doughnut Chart) -->
+        <div class="col-lg-5">
+            <div class="card sb-card p-4 h-100">
+                <h5 class="fw-bold mb-3"><i class="fa-solid fa-chart-pie text-warning me-2"></i>Order Status Breakdown</h5>
+                <div style="height: 250px;">
+                    <canvas id="statusChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Food Category Distribution (Bar Chart) -->
+        <div class="col-12">
+            <div class="card sb-card p-4">
+                <h5 class="fw-bold mb-3"><i class="fa-solid fa-chart-bar text-primary me-2"></i>Food Categories Menu Density</h5>
+                <div style="height: 240px;">
+                    <canvas id="categoryChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Management Tables -->
+    <div class="row g-4">
+        <!-- Restaurants Management -->
+        <div class="col-lg-6">
+            <div class="card sb-card p-4 h-100">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="fw-bold mb-0"><i class="fa-solid fa-store text-success me-2"></i>Campus Outlets ({{ all_restaurants|length }})</h5>
+                    <a href="/admin/restaurants/restaurant/add/" target="_blank" class="btn btn-sm btn-outline-secondary">+ Add Outlet</a>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table table-sm align-middle mb-0">
+                        <thead class="table-light small">
+                            <tr>
+                                <th>Outlet Name</th>
+                                <th>Owner</th>
+                                <th>Rating</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for r in all_restaurants %}
+                            <tr>
+                                <td class="fw-semibold">{{ r.name }}</td>
+                                <td class="small text-muted">{{ r.owner.username }}</td>
+                                <td><span class="badge bg-warning text-dark"><i class="fa-solid fa-star"></i> {{ r.rating }}</span></td>
+                                <td>
+                                    <span class="badge {% if r.is_active %}bg-success{% else %}bg-secondary{% endif %}">
+                                        {% if r.is_active %}Active{% else %}Deactivated{% endif %}
+                                    </span>
+                                </td>
+                                <td>
+                                    <form method="post" action="{% url 'dashboard:toggle_restaurant_status' r.id %}">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-sm {% if r.is_active %}btn-outline-danger{% else %}btn-outline-success{% endif %} py-0 px-2" style="font-size: 0.75rem;">
+                                            {% if r.is_active %}Deactivate{% else %}Approve{% endif %}
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr><td colspan="5" class="text-center py-2 text-muted">No restaurants registered.</td></tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Campus Orders -->
+        <div class="col-lg-6">
+            <div class="card sb-card p-4 h-100">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="fw-bold mb-0"><i class="fa-solid fa-clock-rotate-left text-primary me-2"></i>Recent Campus Orders</h5>
+                    <a href="/admin/orders/order/" target="_blank" class="small text-muted">View all</a>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table table-sm align-middle mb-0">
+                        <thead class="table-light small">
+                            <tr>
+                                <th>Order #</th>
+                                <th>Customer</th>
+                                <th>Amount</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for o in recent_orders %}
+                            <tr>
+                                <td>
+                                    <a href="{% url 'orders:order_detail' o.order_number %}" class="fw-bold text-decoration-none">
+                                        {{ o.order_number }}
+                                    </a>
+                                </td>
+                                <td class="small">{{ o.user.username }}</td>
+                                <td class="fw-bold text-success">₹{{ o.total_amount }}</td>
+                                <td>
+                                    <span class="badge {{ o.status_badge_class }}" style="font-size: 0.72rem;">{{ o.get_order_status_display }}</span>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr><td colspan="4" class="text-center py-2 text-muted">No orders yet.</td></tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Chart 1: Revenue Trend
+    const revCtx = document.getElementById('revenueChart').getContext('2d');
+    new Chart(revCtx, {
+        type: 'line',
+        data: {
+            labels: {{ revenue_labels_json|safe }},
+            datasets: [{
+                label: 'Weekly Sales Revenue (₹)',
+                data: {{ revenue_values_json|safe }},
+                borderColor: '#15803d',
+                backgroundColor: 'rgba(21, 128, 61, 0.1)',
+                borderWidth: 3,
+                fill: true,
+                tension: 0.35,
+                pointBackgroundColor: '#ea580c',
+                pointRadius: 5
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: { beginAtZero: true }
+            }
+        }
+    });
+
+    // Chart 2: Order Status
+    const statusCtx = document.getElementById('statusChart').getContext('2d');
+    new Chart(statusCtx, {
+        type: 'doughnut',
+        data: {
+            labels: {{ status_labels_json|safe }},
+            datasets: [{
+                data: {{ status_values_json|safe }},
+                backgroundColor: [
+                    '#f59e0b',
+                    '#3b82f6',
+                    '#8b5cf6',
+                    '#10b981',
+                    '#ef4444'
+                ]
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { position: 'bottom' }
+            }
+        }
+    });
+
+    // Chart 3: Category Densities
+    const catCtx = document.getElementById('categoryChart').getContext('2d');
+    new Chart(catCtx, {
+        type: 'bar',
+        data: {
+            labels: {{ cat_labels_json|safe }},
+            datasets: [{
+                label: 'Number of Dishes Offered',
+                data: {{ cat_values_json|safe }},
+                backgroundColor: '#ea580c',
+                borderRadius: 6
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: { beginAtZero: true, ticks: { stepSize: 1 } }
+            }
+        }
+    });
+</script>
+{% endblock %}
+

@@ -1,0 +1,124 @@
+{% extends 'base.html' %}
+
+{% block title %}Register - SmartBite{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-7">
+            <div class="card sb-card border-0 shadow">
+                <div class="card-header bg-white border-bottom-0 text-center pt-4 pb-2">
+                    <div class="d-inline-flex align-items-center justify-content-center p-3 rounded-circle mb-2" style="background-color: var(--sb-green-light);">
+                        <i class="fa-solid fa-user-plus fa-2x" style="color: var(--sb-green);"></i>
+                    </div>
+                    <h3 class="fw-bold mb-1">Create Your SmartBite Account</h3>
+                    <p class="text-muted small">Join your campus smart food community</p>
+                </div>
+
+                <div class="card-body p-4">
+                    <form method="post" id="registerForm">
+                        {% csrf_token %}
+
+                        {% if form.non_field_errors %}
+                            <div class="alert alert-danger">
+                                {{ form.non_field_errors }}
+                            </div>
+                        {% endif %}
+
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Account Role <span class="text-danger">*</span></label>
+                                {{ form.role }}
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Username <span class="text-danger">*</span></label>
+                                {{ form.username }}
+                                {% if form.username.errors %}<div class="text-danger small">{{ form.username.errors.0 }}</div>{% endif %}
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Email Address</label>
+                                {{ form.email }}
+                                {% if form.email.errors %}<div class="text-danger small">{{ form.email.errors.0 }}</div>{% endif %}
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Phone Number</label>
+                                {{ form.phone }}
+                                {% if form.phone.errors %}<div class="text-danger small">{{ form.phone.errors.0 }}</div>{% endif %}
+                            </div>
+
+                            <!-- Customer Profile Extra Fields -->
+                            <div id="customerFields" class="row g-3 mt-1">
+                                <div class="col-md-6">
+                                    <label class="form-label fw-semibold">Hostel Block & Room</label>
+                                    {{ form.hostel_block_room }}
+                                    <div class="form-text">e.g. Block A, Room 108</div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label fw-semibold">Dietary Preference</label>
+                                    {{ form.preferred_diet }}
+                                </div>
+                            </div>
+
+                            <!-- Restaurant Extra Fields -->
+                            <div id="restaurantFields" class="row g-3 mt-1 d-none">
+                                <div class="col-md-6">
+                                    <label class="form-label fw-semibold">Restaurant Name <span class="text-danger">*</span></label>
+                                    {{ form.restaurant_name }}
+                                    {% if form.restaurant_name.errors %}<div class="text-danger small">{{ form.restaurant_name.errors.0 }}</div>{% endif %}
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label fw-semibold">Restaurant Address</label>
+                                    {{ form.restaurant_address }}
+                                </div>
+                            </div>
+
+                            <div class="col-md-6 mt-3">
+                                <label class="form-label fw-semibold">Password <span class="text-danger">*</span></label>
+                                {{ form.password }}
+                                {% if form.password.errors %}<div class="text-danger small">{{ form.password.errors.0 }}</div>{% endif %}
+                            </div>
+                            <div class="col-md-6 mt-3">
+                                <label class="form-label fw-semibold">Confirm Password <span class="text-danger">*</span></label>
+                                {{ form.confirm_password }}
+                                {% if form.confirm_password.errors %}<div class="text-danger small">{{ form.confirm_password.errors.0 }}</div>{% endif %}
+                            </div>
+                        </div>
+
+                        <div class="mt-4">
+                            <button type="submit" class="btn btn-sb-green w-100 py-2">
+                                <i class="fa-solid fa-check me-1"></i> Complete Registration
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="card-footer bg-light text-center py-3">
+                    <span class="small text-muted">Already have an account? </span>
+                    <a href="{% url 'accounts:login' %}" class="small fw-bold text-decoration-none" style="color: var(--sb-green);">Sign In Here</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const roleSelect = document.getElementById('id_role');
+    const customerFields = document.getElementById('customerFields');
+    const restaurantFields = document.getElementById('restaurantFields');
+
+    function toggleFields() {
+        if (roleSelect.value === 'RESTAURANT_OWNER') {
+            customerFields.classList.add('d-none');
+            restaurantFields.classList.remove('d-none');
+        } else {
+            customerFields.classList.remove('d-none');
+            restaurantFields.classList.add('d-none');
+        }
+    }
+
+    roleSelect.addEventListener('change', toggleFields);
+    document.addEventListener('DOMContentLoaded', toggleFields);
+</script>
+{% endblock %}
+

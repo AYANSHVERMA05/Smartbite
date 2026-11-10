@@ -1,0 +1,110 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ restaurant.name }} Menu - SmartBite{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Restaurant Header Card -->
+    <div class="card sb-card overflow-hidden mb-4 border-0 shadow">
+        <div class="row g-0">
+            <div class="col-md-4">
+                <img src="{{ restaurant.image_url|default:'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=600' }}" alt="{{ restaurant.name }}" class="img-fluid h-100 w-100" style="object-fit: cover; min-height: 220px;">
+            </div>
+            <div class="col-md-8">
+                <div class="card-body p-4 d-flex flex-column justify-content-between h-100">
+                    <div>
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <h2 class="fw-bold mb-1">{{ restaurant.name }}</h2>
+                                <p class="text-muted small mb-2"><i class="fa-solid fa-location-dot text-danger me-1"></i> {{ restaurant.address }} &bull; <i class="fa-solid fa-phone text-secondary me-1"></i> {{ restaurant.phone }}</p>
+                            </div>
+                            <span class="badge bg-success fs-6"><i class="fa-solid fa-star"></i> {{ restaurant.rating }}</span>
+                        </div>
+                        <p class="text-secondary small mb-2">{{ restaurant.description }}</p>
+                    </div>
+
+                    <div class="d-flex flex-wrap gap-2 align-items-center pt-2 border-top">
+                        <span class="badge bg-light text-dark border">{{ restaurant.cuisine_type }}</span>
+                        <span class="badge bg-light text-dark border"><i class="fa-solid fa-clock text-primary me-1"></i> {{ restaurant.opening_time|time:"H:i" }} - {{ restaurant.closing_time|time:"H:i" }}</span>
+                        {% if restaurant.is_active %}
+                        <span class="badge bg-success-subtle text-success border border-success">Open for Orders</span>
+                        {% else %}
+                        <span class="badge bg-danger">Currently Closed</span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Category Pills & Veg Filter -->
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4">
+        <div class="d-flex flex-wrap gap-2">
+            <a href="{% url 'restaurants:restaurant_detail' restaurant.id %}" class="btn btn-sm {% if not selected_cat %}btn-sb-green{% else %}btn-outline-secondary{% endif %}">All Items</a>
+            {% for cat in categories %}
+            <a href="?cat={{ cat.id }}{% if veg_only %}&veg=1{% endif %}" class="btn btn-sm {% if selected_cat == cat.id|stringformat:'s' %}btn-sb-green{% else %}btn-outline-secondary{% endif %}">{{ cat.name }}</a>
+            {% endfor %}
+        </div>
+
+        <div>
+            {% if veg_only %}
+            <a href="?{% if selected_cat %}cat={{ selected_cat }}{% endif %}" class="btn btn-sm btn-success"><i class="fa-solid fa-seedling me-1"></i> Veg Only Filter: ON</a>
+            {% else %}
+            <a href="?veg=1{% if selected_cat %}&cat={{ selected_cat }}{% endif %}" class="btn btn-sm btn-outline-success"><i class="fa-solid fa-seedling me-1"></i> Filter Veg Only</a>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Menu Items List -->
+    <div class="row g-4">
+        {% for food in food_items %}
+        <div class="col-lg-3 col-md-6">
+            <div class="card sb-card h-100 d-flex flex-column">
+                <div class="food-card-img-wrapper position-relative">
+                    {% if food.image_url %}
+                    <img src="{{ food.image_url }}" alt="{{ food.name }}" class="food-card-img">
+                    {% else %}
+                    <div class="d-flex align-items-center justify-content-center h-100 bg-light text-muted">
+                        <i class="fa-solid fa-utensils fa-3x"></i>
+                    </div>
+                    {% endif %}
+                    <span class="position-absolute top-0 start-0 m-2">
+                        {% if food.is_veg %}
+                        <span class="diet-indicator veg" title="Vegetarian"><span class="dot"></span></span>
+                        {% else %}
+                        <span class="diet-indicator nonveg" title="Non-Vegetarian"><span class="dot"></span></span>
+                        {% endif %}
+                    </span>
+                </div>
+
+                <div class="card-body p-3 d-flex flex-column flex-grow-1">
+                    <div class="d-flex justify-content-between align-items-start mb-1">
+                        <h6 class="fw-bold mb-0 text-truncate" title="{{ food.name }}">{{ food.name }}</h6>
+                    </div>
+                    <p class="small text-secondary mb-3 text-truncate-2" style="font-size: 0.85rem; height: 38px; overflow: hidden;">
+                        {{ food.description }}
+                    </p>
+
+                    <div class="mt-auto d-flex justify-content-between align-items-center pt-2 border-top">
+                        <span class="price-tag">₹{{ food.price }}</span>
+                        <div class="d-flex gap-1">
+                            <a href="{% url 'menu:food_detail' food.id %}" class="btn btn-outline-secondary btn-sm" title="Details">
+                                <i class="fa-solid fa-circle-info"></i>
+                            </a>
+                            <a href="{% url 'orders:add_to_cart' food.id %}" class="btn btn-sb-orange btn-sm">
+                                <i class="fa-solid fa-plus me-1"></i> Add
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12 text-center py-4 text-muted">
+            No dishes found for this filter.
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
+

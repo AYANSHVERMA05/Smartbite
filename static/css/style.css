@@ -1,0 +1,290 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
+:root {
+    --sb-orange: #f97316;
+    --sb-orange-hover: #ea580c;
+    --sb-orange-subtle: #fff7ed;
+    --sb-green: #15803d;
+    --sb-green-dark: #14532d;
+    --sb-green-subtle: #f0fdf4;
+    --sb-dark: #0f172a;
+    --sb-gray-dark: #334155;
+    --sb-gray: #64748b;
+    --sb-gray-light: #94a3b8;
+    --sb-border: #f1f5f9;
+    --sb-border-subtle: #e2e8f0;
+    --sb-bg: #fafafa;
+    --sb-radius-sm: 8px;
+    --sb-radius: 12px;
+    --sb-radius-lg: 16px;
+    --sb-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    --sb-shadow-hover: 0 8px 20px rgba(0, 0, 0, 0.06);
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+    background-color: var(--sb-bg);
+    color: var(--sb-dark);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    letter-spacing: -0.01em;
+    -webkit-font-smoothing: antialiased;
+}
+
+main {
+    flex: 1;
+}
+
+/* Navbar */
+.sb-navbar {
+    background-color: #ffffff;
+    border-bottom: 1px solid var(--sb-border-subtle);
+    padding: 0.75rem 0;
+}
+
+.sb-brand {
+    font-size: 1.35rem;
+    font-weight: 800;
+    color: var(--sb-dark);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    letter-spacing: -0.02em;
+}
+
+.sb-brand .bite {
+    color: var(--sb-orange);
+}
+
+.sb-brand:hover {
+    color: var(--sb-dark);
+}
+
+.nav-link {
+    font-weight: 500;
+    font-size: 0.92rem;
+    color: var(--sb-gray-dark);
+    padding: 0.45rem 0.8rem !important;
+    border-radius: var(--sb-radius-sm);
+    transition: all 0.15s ease-in-out;
+}
+
+.nav-link:hover {
+    color: var(--sb-orange) !important;
+    background-color: #f8fafc;
+}
+
+.nav-link.active {
+    color: var(--sb-orange) !important;
+    font-weight: 600;
+}
+
+/* Minimalist Clean Buttons */
+.btn {
+    border-radius: var(--sb-radius-sm);
+    font-weight: 600;
+    font-size: 0.9rem;
+    padding: 0.45rem 1rem;
+    transition: all 0.15s ease;
+}
+
+.btn-sb-orange {
+    background-color: var(--sb-orange);
+    color: #ffffff;
+    border: 1px solid transparent;
+}
+
+.btn-sb-orange:hover {
+    background-color: var(--sb-orange-hover);
+    color: #ffffff;
+    box-shadow: 0 4px 12px rgba(249, 115, 22, 0.25);
+}
+
+.btn-sb-green {
+    background-color: var(--sb-green);
+    color: #ffffff;
+    border: 1px solid transparent;
+}
+
+.btn-sb-green:hover {
+    background-color: var(--sb-green-dark);
+    color: #ffffff;
+    box-shadow: 0 4px 12px rgba(21, 128, 61, 0.25);
+}
+
+.btn-outline-sb-orange {
+    border: 1px solid var(--sb-border-subtle);
+    color: var(--sb-orange);
+    background: #ffffff;
+}
+
+.btn-outline-sb-orange:hover {
+    background-color: var(--sb-orange-subtle);
+    border-color: var(--sb-orange);
+    color: var(--sb-orange-hover);
+}
+
+.btn-outline-sb-green {
+    border: 1px solid var(--sb-border-subtle);
+    color: var(--sb-green);
+    background: #ffffff;
+}
+
+.btn-outline-sb-green:hover {
+    background-color: var(--sb-green-subtle);
+    border-color: var(--sb-green);
+    color: var(--sb-green-dark);
+}
+
+/* Minimalist Cards */
+.sb-card {
+    background: #ffffff;
+    border-radius: var(--sb-radius);
+    border: 1px solid var(--sb-border-subtle);
+    box-shadow: var(--sb-shadow);
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+    overflow: hidden;
+}
+
+.sb-card:hover {
+    border-color: #cbd5e1;
+    box-shadow: var(--sb-shadow-hover);
+}
+
+/* Food Card Image */
+.food-card-img-wrapper {
+    position: relative;
+    height: 180px;
+    overflow: hidden;
+    background-color: #f8fafc;
+}
+
+.food-card-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.sb-card:hover .food-card-img {
+    transform: scale(1.03);
+}
+
+/* Minimal Diet Indicator */
+.diet-indicator {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 16px;
+    height: 16px;
+    border: 1.5px solid #22c55e;
+    padding: 1px;
+    border-radius: 3px;
+    background: #ffffff;
+}
+
+.diet-indicator.veg .dot {
+    width: 7px;
+    height: 7px;
+    background: #22c55e;
+    border-radius: 50%;
+}
+
+.diet-indicator.nonveg {
+    border-color: #ef4444;
+}
+
+.diet-indicator.nonveg .dot {
+    width: 7px;
+    height: 7px;
+    background: #ef4444;
+    border-radius: 50%;
+}
+
+.price-tag {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--sb-dark);
+}
+
+/* Modern Minimal Hero */
+.hero-minimal {
+    background-color: #ffffff;
+    border: 1px solid var(--sb-border-subtle);
+    border-radius: var(--sb-radius-lg);
+    padding: 3rem 2.5rem;
+    margin-bottom: 2.5rem;
+}
+
+/* Stat Box */
+.stat-box {
+    background: #ffffff;
+    border-radius: var(--sb-radius);
+    padding: 1.25rem;
+    border: 1px solid var(--sb-border-subtle);
+}
+
+.stat-box.green {
+    border-left: 4px solid var(--sb-green);
+}
+
+.stat-box.blue {
+    border-left: 4px solid #3b82f6;
+}
+
+.stat-box.purple {
+    border-left: 4px solid #8b5cf6;
+}
+
+.stat-number {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--sb-dark);
+}
+
+/* Clean Minimal Footer */
+footer {
+    background-color: #ffffff;
+    color: var(--sb-gray);
+    border-top: 1px solid var(--sb-border-subtle);
+    padding: 2.5rem 0 1.75rem;
+    margin-top: 4rem;
+}
+
+footer a {
+    color: var(--sb-gray-dark);
+    text-decoration: none;
+    transition: color 0.15s ease;
+}
+
+footer a:hover {
+    color: var(--sb-orange);
+}
+
+.footer-heading {
+    font-size: 0.82rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--sb-dark);
+    margin-bottom: 1rem;
+}
+
+/* Forms & Inputs */
+.form-control, .form-select {
+    border-radius: var(--sb-radius-sm);
+    border: 1px solid var(--sb-border-subtle);
+    padding: 0.5rem 0.85rem;
+    font-size: 0.92rem;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: var(--sb-orange);
+    box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.12);
+}

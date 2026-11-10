@@ -1,0 +1,116 @@
+{% extends 'base.html' %}
+
+{% block title %}Nutrition & Health Food Filter - SmartBite{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Clean Minimal Header -->
+    <div class="card sb-card p-4 mb-4 border bg-white">
+        <div class="d-flex flex-wrap justify-content-between align-items-center">
+            <div>
+                <h3 class="fw-bold mb-1">Nutrition &amp; Dietary Filter</h3>
+                <p class="text-secondary small mb-0">Filter campus meals by Calorie limits, Protein content, and Dietary tags.</p>
+            </div>
+            <div class="d-flex gap-2 mt-3 mt-md-0">
+                <a href="?tag=High Protein" class="btn btn-outline-secondary btn-sm"><i class="fa-solid fa-dumbbell text-primary me-1"></i> High Protein</a>
+                <a href="?max_calories=400" class="btn btn-outline-secondary btn-sm"><i class="fa-solid fa-fire text-danger me-1"></i> Under 400 kcal</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filter Form -->
+    <div class="card sb-card p-4 mb-4 border-0 shadow-sm">
+        <form method="get" class="row g-3 align-items-end">
+            <div class="col-md-3 col-6">
+                <label class="form-label fw-bold">Max Calories (kcal)</label>
+                <input type="number" name="max_calories" value="{{ max_cal }}" placeholder="e.g. 500" class="form-control">
+                <div class="form-text">Limit calories per dish</div>
+            </div>
+
+            <div class="col-md-3 col-6">
+                <label class="form-label fw-bold">Min Protein (grams)</label>
+                <input type="number" step="0.5" name="min_protein" value="{{ min_pro }}" placeholder="e.g. 15.0" class="form-control">
+                <div class="form-text">Gym / Fitness protein target</div>
+            </div>
+
+            <div class="col-md-3 col-6">
+                <label class="form-label fw-bold">Diet</label>
+                <select name="is_veg" class="form-select">
+                    <option value="">Any Diet</option>
+                    <option value="1" {% if is_veg == '1' %}selected{% endif %}>Pure Vegetarian</option>
+                    <option value="0" {% if is_veg == '0' %}selected{% endif %}>Non-Vegetarian</option>
+                </select>
+            </div>
+
+            <div class="col-md-3 col-6 d-flex gap-2">
+                <button type="submit" class="btn btn-sb-green flex-grow-1">Filter Nutrition</button>
+                <a href="{% url 'nutrition:food_nutrition_filter' %}" class="btn btn-outline-secondary" title="Reset"><i class="fa-solid fa-rotate-left"></i></a>
+            </div>
+        </form>
+    </div>
+
+    <!-- Results -->
+    <h5 class="fw-bold mb-3">Matching Nutritious Dishes ({{ items|length }})</h5>
+
+    <div class="row g-4">
+        {% for food in items %}
+        <div class="col-lg-4 col-md-6">
+            <div class="card sb-card h-100 p-3 d-flex flex-column">
+                <div class="d-flex justify-content-between align-items-start mb-2">
+                    <div>
+                        <div class="d-flex align-items-center gap-2">
+                            {% if food.is_veg %}
+                            <span class="diet-indicator veg"><span class="dot"></span></span>
+                            {% else %}
+                            <span class="diet-indicator nonveg"><span class="dot"></span></span>
+                            {% endif %}
+                            <h6 class="fw-bold mb-0">{{ food.name }}</h6>
+                        </div>
+                        <small class="text-muted">{{ food.restaurant.name }}</small>
+                    </div>
+                    <span class="fw-bold text-success fs-5">₹{{ food.price }}</span>
+                </div>
+
+                <!-- Nutrition Grid -->
+                {% if food.nutrition %}
+                <div class="row g-1 text-center my-2 p-2 bg-light rounded border">
+                    <div class="col-3">
+                        <small class="text-muted d-block" style="font-size: 0.7rem;">CALORIES</small>
+                        <strong class="text-danger small">{{ food.nutrition.calories }}</strong>
+                    </div>
+                    <div class="col-3">
+                        <small class="text-muted d-block" style="font-size: 0.7rem;">PROTEIN</small>
+                        <strong class="text-primary small">{{ food.nutrition.protein }}g</strong>
+                    </div>
+                    <div class="col-3">
+                        <small class="text-muted d-block" style="font-size: 0.7rem;">CARBS</small>
+                        <strong class="text-warning small">{{ food.nutrition.carbohydrates }}g</strong>
+                    </div>
+                    <div class="col-3">
+                        <small class="text-muted d-block" style="font-size: 0.7rem;">FAT</small>
+                        <strong class="text-secondary small">{{ food.nutrition.fat }}g</strong>
+                    </div>
+                </div>
+                {% endif %}
+
+                <p class="small text-secondary mb-3 flex-grow-1" style="font-size: 0.85rem;">{{ food.description|truncatewords:15 }}</p>
+
+                <div class="mt-auto d-flex justify-content-between align-items-center pt-2 border-top">
+                    <a href="{% url 'menu:food_detail' food.id %}" class="btn btn-outline-secondary btn-sm">Full Info</a>
+                    <a href="{% url 'orders:add_to_cart' food.id %}" class="btn btn-sb-orange btn-sm">
+                        <i class="fa-solid fa-cart-plus me-1"></i> Add to Cart
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12 text-center py-5">
+            <i class="fa-solid fa-apple-whole fa-3x text-muted mb-3"></i>
+            <h5>No dishes found for this nutrition criteria</h5>
+            <p class="text-muted">Try relaxing calorie or protein thresholds.</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
+

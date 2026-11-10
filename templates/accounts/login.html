@@ -1,0 +1,144 @@
+{% extends 'base.html' %}
+
+{% block title %}Sign In - SmartBite{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row justify-content-center g-4">
+        <!-- Standard Login Card -->
+        <div class="col-lg-5 col-md-6">
+            <div class="card sb-card border-0 shadow h-100">
+                <div class="card-header bg-white border-bottom-0 text-center pt-4 pb-2">
+                    <div class="d-inline-flex align-items-center justify-content-center p-3 rounded-circle mb-2" style="background-color: var(--sb-orange-light);">
+                        <i class="fa-solid fa-arrow-right-to-bracket fa-2x" style="color: var(--sb-orange);"></i>
+                    </div>
+                    <h3 class="fw-bold mb-1">Sign In to SmartBite</h3>
+                    <p class="text-muted small">Enter your credentials below to access your account</p>
+                </div>
+
+                <div class="card-body p-4">
+                    <form method="post" id="loginForm">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Username</label>
+                            {{ form.username }}
+                            {% if form.username.errors %}
+                                <div class="text-danger small mt-1">{{ form.username.errors.0 }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Password</label>
+                            {{ form.password }}
+                            {% if form.password.errors %}
+                                <div class="text-danger small mt-1">{{ form.password.errors.0 }}</div>
+                            {% endif %}
+                        </div>
+
+                        <button type="submit" class="btn btn-sb-orange w-100 py-2 mt-2 fw-bold">
+                            <i class="fa-solid fa-right-to-bracket me-1"></i> Sign In
+                        </button>
+                    </form>
+                </div>
+
+                <div class="card-footer bg-light text-center py-3">
+                    <span class="small text-muted">Don't have an account yet? </span>
+                    <a href="{% url 'accounts:register' %}" class="small fw-bold text-decoration-none" style="color: var(--sb-orange);">Register Here</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Role Sign In Card -->
+        <div class="col-lg-6 col-md-6">
+            <div class="card sb-card p-4 h-100 border">
+                <div class="mb-3">
+                    <h5 class="fw-bold mb-1">Quick Role Sign In</h5>
+                    <p class="text-muted small mb-0">Select a pre-configured role to access their portal directly.</p>
+                </div>
+
+                <div class="d-flex flex-column gap-2">
+                    <!-- Student 1 -->
+                    <a href="{% url 'accounts:quick_login' 'student' %}" class="p-3 rounded-3 bg-light border text-decoration-none text-dark d-flex align-items-center justify-content-between hover-shadow transition">
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="p-2 rounded-circle bg-primary bg-opacity-10 text-primary">
+                                <i class="fa-solid fa-graduation-cap fa-lg"></i>
+                            </div>
+                            <div>
+                                <strong class="d-block">Student / Customer (General)</strong>
+                                <small class="text-muted">Username: <code>rahul</code> &bull; All Cuisines &amp; Budget Planner</small>
+                            </div>
+                        </div>
+                        <span class="btn btn-sm btn-outline-primary fw-bold">Sign In &rarr;</span>
+                    </a>
+
+                    <!-- Student 2 (Veg) -->
+                    <a href="{% url 'accounts:quick_login' 'student_veg' %}" class="p-3 rounded-3 bg-light border text-decoration-none text-dark d-flex align-items-center justify-content-between hover-shadow transition">
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="p-2 rounded-circle bg-success bg-opacity-10 text-success">
+                                <i class="fa-solid fa-seedling fa-lg"></i>
+                            </div>
+                            <div>
+                                <strong class="d-block">Student / Customer (Pure Veg)</strong>
+                                <small class="text-muted">Username: <code>priya</code> &bull; Veg Filters &amp; Mess Subscriptions</small>
+                            </div>
+                        </div>
+                        <span class="btn btn-sm btn-outline-success fw-bold">Sign In &rarr;</span>
+                    </a>
+
+                    <!-- Restaurant Owner 1 -->
+                    <a href="{% url 'accounts:quick_login' 'owner' %}" class="p-3 rounded-3 bg-light border text-decoration-none text-dark d-flex align-items-center justify-content-between hover-shadow transition">
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="p-2 rounded-circle bg-warning bg-opacity-10 text-warning">
+                                <i class="fa-solid fa-kitchen-set fa-lg text-dark"></i>
+                            </div>
+                            <div>
+                                <strong class="d-block">Restaurant Owner (Desi Spice Dhaba)</strong>
+                                <small class="text-muted">Username: <code>owner_spicedhaba</code> &bull; Live Kitchen Orders</small>
+                            </div>
+                        </div>
+                        <span class="btn btn-sm btn-outline-warning text-dark fw-bold">Sign In &rarr;</span>
+                    </a>
+
+                    <!-- Restaurant Owner 2 -->
+                    <a href="{% url 'accounts:quick_login' 'owner_greenbowl' %}" class="p-3 rounded-3 bg-light border text-decoration-none text-dark d-flex align-items-center justify-content-between hover-shadow transition">
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="p-2 rounded-circle bg-info bg-opacity-10 text-info">
+                                <i class="fa-solid fa-bowl-food fa-lg"></i>
+                            </div>
+                            <div>
+                                <strong class="d-block">Restaurant Owner (The Green Bowl)</strong>
+                                <small class="text-muted">Username: <code>owner_greenbowl</code> &bull; Healthy Menu &amp; Surplus</small>
+                            </div>
+                        </div>
+                        <span class="btn btn-sm btn-outline-info text-dark fw-bold">Sign In &rarr;</span>
+                    </a>
+
+                    <!-- Administrator -->
+                    <a href="{% url 'accounts:quick_login' 'admin' %}" class="p-3 rounded-3 bg-light border text-decoration-none text-dark d-flex align-items-center justify-content-between hover-shadow transition">
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="p-2 rounded-circle bg-danger bg-opacity-10 text-danger">
+                                <i class="fa-solid fa-shield-halved fa-lg"></i>
+                            </div>
+                            <div>
+                                <strong class="d-block">System Administrator</strong>
+                                <small class="text-muted">Username: <code>admin</code> &bull; Central Chart.js Analytics</small>
+                            </div>
+                        </div>
+                        <span class="btn btn-sm btn-outline-danger fw-bold">Sign In &rarr;</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.hover-shadow:hover {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    transform: translateY(-2px);
+}
+.transition {
+    transition: all 0.2s ease-in-out;
+}
+</style>
+{% endblock %}

@@ -1,0 +1,193 @@
+{% extends 'base.html' %}
+
+{% block title %}Restaurant Owner Dashboard - {{ restaurant.name }} - SmartBite{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Clean Minimal Header -->
+    <div class="card sb-card p-4 mb-4 border bg-white">
+        <div class="d-flex flex-wrap justify-content-between align-items-center">
+            <div>
+                <h3 class="fw-bold mb-1">{{ restaurant.name }}</h3>
+                <p class="mb-0 text-secondary small"><i class="fa-solid fa-location-dot me-1 text-danger"></i> {{ restaurant.address }} &bull; Phone: {{ restaurant.phone }}</p>
+            </div>
+            <div class="d-flex gap-2 mt-3 mt-md-0">
+                <a href="{% url 'menu:add_food_item' %}" class="btn btn-sb-green btn-sm px-3 py-2">
+                    <i class="fa-solid fa-plus me-1"></i> Add Food Item
+                </a>
+                <a href="{% url 'surplus_food:owner_surplus_manage' %}" class="btn btn-outline-danger btn-sm px-3 py-2">
+                    <i class="fa-solid fa-recycle me-1"></i> Surplus Batches
+                </a>
+                <a href="{% url 'restaurants:owner_restaurant_profile' %}" class="btn btn-outline-secondary btn-sm px-3 py-2">
+                    <i class="fa-solid fa-gear me-1"></i> Settings
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="row g-3 mb-4">
+        <div class="col-md-3 col-6">
+            <div class="stat-box green h-100">
+                <small class="text-muted d-block fw-semibold">TOTAL ORDERS</small>
+                <span class="stat-number">{{ total_orders }}</span>
+            </div>
+        </div>
+        <div class="col-md-3 col-6">
+            <div class="stat-box h-100">
+                <small class="text-muted d-block fw-semibold">TOTAL REVENUE (PAID)</small>
+                <span class="stat-number text-success">₹{{ total_revenue }}</span>
+            </div>
+        </div>
+        <div class="col-md-3 col-6">
+            <div class="stat-box blue h-100">
+                <small class="text-muted d-block fw-semibold">ACTIVE PENDING</small>
+                <span class="stat-number text-warning">{{ pending_orders }}</span>
+            </div>
+        </div>
+        <div class="col-md-3 col-6">
+            <div class="stat-box purple h-100">
+                <small class="text-muted d-block fw-semibold">KITCHEN PREPARING</small>
+                <span class="stat-number text-primary">{{ preparing_orders }}</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Kitchen Orders Queue -->
+    <div class="card sb-card p-4 mb-4">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h5 class="fw-bold mb-0"><i class="fa-solid fa-bell-concierge text-primary me-2"></i>Live Incoming Orders</h5>
+            <span class="badge bg-secondary">{{ orders|length }} Orders</span>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light small">
+                    <tr>
+                        <th>Order #</th>
+                        <th>Customer</th>
+                        <th>Items Ordered</th>
+                        <th>Delivery To</th>
+                        <th>Amount</th>
+                        <th>Current Status</th>
+                        <th>Quick Update</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for o in orders %}
+                    <tr>
+                        <td class="fw-bold">
+                            <a href="{% url 'orders:order_detail' o.order_number %}" class="text-decoration-none">
+                                {{ o.order_number }}
+                            </a>
+                            <small class="text-muted d-block" style="font-size: 0.72rem;">{{ o.created_at|date:"h:i A" }}</small>
+                        </td>
+                        <td>
+                            <strong>{{ o.user.username }}</strong>
+                            <small class="text-muted d-block">{{ o.contact_phone }}</small>
+                        </td>
+                        <td class="small">
+                            {% for item in o.items.all %}
+                            <div>{{ item.quantity }}x {{ item.food_name }}</div>
+                            {% endfor %}
+                        </td>
+                        <td class="small text-muted">{{ o.delivery_address }}</td>
+                        <td class="fw-bold text-success">₹{{ o.total_amount }}</td>
+                        <td>
+                            <span class="badge {{ o.status_badge_class }}">{{ o.get_order_status_display }}</span>
+                        </td>
+                        <td>
+                            <form method="post" action="{% url 'orders:update_order_status' o.id %}" class="d-flex gap-1">
+                                {% csrf_token %}
+                                <select name="status" class="form-select form-select-sm" style="width: 140px;">
+                                    <option value="PENDING" {% if o.order_status == 'PENDING' %}selected{% endif %}>Pending</option>
+                                    <option value="PREPARING" {% if o.order_status == 'PREPARING' %}selected{% endif %}>Preparing</option>
+                                    <option value="OUT_FOR_DELIVERY" {% if o.order_status == 'OUT_FOR_DELIVERY' %}selected{% endif %}>Out for Delivery</option>
+                                    <option value="DELIVERED" {% if o.order_status == 'DELIVERED' %}selected{% endif %}>Delivered (Paid)</option>
+                                    <option value="CANCELLED" {% if o.order_status == 'CANCELLED' %}selected{% endif %}>Cancelled</option>
+                                </select>
+                                <button type="submit" class="btn btn-sm btn-primary py-0">Save</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="7" class="text-center text-muted py-4">No incoming orders at the moment.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Menu Items Management Table -->
+    <div class="card sb-card p-4">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h5 class="fw-bold mb-0"><i class="fa-solid fa-utensils text-warning me-2"></i>My Menu Items ({{ food_items|length }})</h5>
+            <a href="{% url 'menu:add_food_item' %}" class="btn btn-sb-green btn-sm">
+                <i class="fa-solid fa-plus me-1"></i> Add New Dish
+            </a>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light small">
+                    <tr>
+                        <th>Dish</th>
+                        <th>Category</th>
+                        <th>Price</th>
+                        <th>Meal Type</th>
+                        <th>Diet</th>
+                        <th>Nutrition</th>
+                        <th>Availability</th>
+                        <th class="text-end">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for f in food_items %}
+                    <tr>
+                        <td>
+                            <strong>{{ f.name }}</strong>
+                        </td>
+                        <td><span class="badge bg-light text-dark border">{{ f.category.name }}</span></td>
+                        <td class="fw-bold text-success">₹{{ f.price }}</td>
+                        <td class="small">{{ f.get_meal_type_display }}</td>
+                        <td>
+                            {% if f.is_veg %}
+                            <span class="badge bg-success-subtle text-success border border-success">Veg</span>
+                            {% else %}
+                            <span class="badge bg-danger-subtle text-danger border border-danger">Non-Veg</span>
+                            {% endif %}
+                        </td>
+                        <td class="small text-muted">
+                            {% if f.nutrition %}
+                            {{ f.nutrition.calories }} kcal &bull; {{ f.nutrition.protein }}g P
+                            {% else %}
+                            N/A
+                            {% endif %}
+                        </td>
+                        <td>
+                            <form method="post" action="{% url 'menu:toggle_food_availability' f.id %}">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-sm {% if f.is_available %}btn-success{% else %}btn-secondary{% endif %} py-0 px-2">
+                                    {% if f.is_available %}Available{% else %}Unavailable{% endif %}
+                                </button>
+                            </form>
+                        </td>
+                        <td class="text-end">
+                            <a href="{% url 'menu:edit_food_item' f.id %}" class="btn btn-sm btn-outline-primary py-0 me-1" title="Edit Dish"><i class="fa-solid fa-pen"></i></a>
+                            <a href="{% url 'menu:delete_food_item' f.id %}" class="btn btn-sm btn-outline-danger py-0" title="Delete Dish"><i class="fa-solid fa-trash"></i></a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="8" class="text-center text-muted py-4">No dishes added to menu yet.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

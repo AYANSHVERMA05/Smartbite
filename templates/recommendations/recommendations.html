@@ -1,0 +1,119 @@
+{% extends 'base.html' %}
+
+{% block title %}AI Food Recommendations - SmartBite{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Clean Minimal Header -->
+    <div class="card sb-card p-4 mb-4 border bg-white">
+        <h3 class="fw-bold mb-1">Personalized Food Recommendations</h3>
+        <p class="text-secondary small mb-0">
+            Dishes tailored to your dietary taste, preferred food categories, and order history.
+        </p>
+    </div>
+
+    <!-- AI Preference Form Bar -->
+    <div class="card sb-card p-3 mb-4 border-0 shadow-sm">
+        <form method="post" class="row g-2 align-items-center">
+            {% csrf_token %}
+            <div class="col-md-5">
+                <span class="small fw-bold text-dark d-block mb-1">Dietary Preference for AI Engine:</span>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="is_vegetarian" id="vegAll" value="0" {% if not pref.is_vegetarian %}checked{% endif %}>
+                    <label class="form-check-label small" for="vegAll">All Foods (Non-Veg Allowed)</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="is_vegetarian" id="vegOnly" value="1" {% if pref.is_vegetarian %}checked{% endif %}>
+                    <label class="form-check-label small" for="vegOnly">Pure Vegetarian Only</label>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <span class="small fw-bold text-dark d-block mb-1">Health Goal:</span>
+                <select name="calorie_preference" class="form-select form-select-sm">
+                    <option value="ANY" {% if pref.calorie_preference == 'ANY' %}selected{% endif %}>Standard Campus Diet</option>
+                    <option value="LOW" {% if pref.calorie_preference == 'LOW' %}selected{% endif %}>Low Calorie Preference (< 400 kcal)</option>
+                    <option value="HIGH_PROTEIN" {% if pref.calorie_preference == 'HIGH_PROTEIN' %}selected{% endif %}>High Protein Preference (> 20g)</option>
+                </select>
+            </div>
+
+            <div class="col-md-3">
+                <button type="submit" class="btn btn-sb-orange btn-sm w-100 py-2">
+                    <i class="fa-solid fa-rotate me-1"></i> Update AI Model
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Recommendations Grid -->
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h4 class="fw-bold mb-0">Recommended Dishes for {{ user.username }}</h4>
+        <span class="small text-muted">Ranked by similarity score</span>
+    </div>
+
+    <div class="row g-4">
+        {% for rec in recommendations %}
+        <div class="col-lg-3 col-md-6">
+            <div class="card sb-card h-100 d-flex flex-column border-top border-4 border-warning">
+                <div class="food-card-img-wrapper position-relative">
+                    {% if rec.item.image_url %}
+                    <img src="{{ rec.item.image_url }}" alt="{{ rec.item.name }}" class="food-card-img">
+                    {% else %}
+                    <div class="d-flex align-items-center justify-content-center h-100 bg-light text-muted">
+                        <i class="fa-solid fa-utensils fa-3x"></i>
+                    </div>
+                    {% endif %}
+                    <span class="position-absolute top-0 start-0 m-2">
+                        {% if rec.item.is_veg %}
+                        <span class="diet-indicator veg"><span class="dot"></span></span>
+                        {% else %}
+                        <span class="diet-indicator nonveg"><span class="dot"></span></span>
+                        {% endif %}
+                    </span>
+                    <span class="position-absolute top-0 end-0 m-2 badge bg-dark opacity-75">
+                        Match: {{ rec.similarity_score|floatformat:2 }}
+                    </span>
+                </div>
+
+                <div class="card-body p-3 d-flex flex-column flex-grow-1">
+                    <h6 class="fw-bold mb-1 text-truncate" title="{{ rec.item.name }}">{{ rec.item.name }}</h6>
+                    <small class="text-muted mb-2"><i class="fa-solid fa-store me-1"></i> {{ rec.item.restaurant.name }}</small>
+
+                    <!-- Why Recommended (Viva Requirement) -->
+                    <div class="p-2 bg-light rounded border mb-3 small" style="font-size: 0.8rem;">
+                        <span class="fw-bold text-primary d-block mb-1">
+                            <i class="fa-solid fa-circle-question me-1"></i> Why Recommended:
+                        </span>
+                        <span class="text-secondary">{{ rec.explanation }}</span>
+                    </div>
+
+                    {% if rec.item.nutrition %}
+                    <div class="d-flex gap-2 small text-muted mb-3" style="font-size: 0.75rem;">
+                        <span class="badge bg-light text-dark border">{{ rec.item.nutrition.calories }} kcal</span>
+                        <span class="badge bg-light text-dark border">{{ rec.item.nutrition.protein }}g Protein</span>
+                    </div>
+                    {% endif %}
+
+                    <div class="mt-auto d-flex justify-content-between align-items-center pt-2 border-top">
+                        <span class="price-tag fs-5">₹{{ rec.item.price }}</span>
+                        <div class="d-flex gap-1">
+                            <a href="{% url 'menu:food_detail' rec.item.id %}" class="btn btn-outline-secondary btn-sm" title="View details">
+                                <i class="fa-solid fa-circle-info"></i>
+                            </a>
+                            <a href="{% url 'orders:add_to_cart' rec.item.id %}" class="btn btn-sb-orange btn-sm">
+                                <i class="fa-solid fa-plus me-1"></i> Add
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12 text-center py-5">
+            <h5>No dishes available for recommendations.</h5>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
+

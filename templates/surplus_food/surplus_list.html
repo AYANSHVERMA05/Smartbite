@@ -1,0 +1,97 @@
+{% extends 'base.html' %}
+
+{% block title %}Surplus Food Reduction - Save Food & Money - SmartBite{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Clean Minimal Header -->
+    <div class="card sb-card p-4 mb-4 border bg-white">
+        <div class="row align-items-center">
+            <div class="col-lg-8">
+                <h3 class="fw-bold mb-1">Surplus Food Deals</h3>
+                <p class="text-secondary small mb-0">
+                    Rescue freshly prepared extra meals at up to 50% discount before pickup deadlines to help prevent campus food waste.
+                </p>
+            </div>
+            <div class="col-lg-4 text-lg-end mt-3 mt-lg-0">
+                {% if user.is_restaurant_owner %}
+                <a href="{% url 'surplus_food:owner_surplus_manage' %}" class="btn btn-outline-danger btn-sm px-3 py-2">
+                    <i class="fa-solid fa-plus me-1"></i> Post Surplus Batch
+                </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Filter Bar -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h4 class="fw-bold mb-0">Live Active Surplus Listings</h4>
+            <small class="text-muted">Automatically hides expired listings upon pickup deadline</small>
+        </div>
+        <div>
+            {% if veg_only %}
+            <a href="{% url 'surplus_food:surplus_list' %}" class="btn btn-sm btn-success"><i class="fa-solid fa-seedling me-1"></i> Veg Only: ON</a>
+            {% else %}
+            <a href="?veg=1" class="btn btn-sm btn-outline-success"><i class="fa-solid fa-seedling me-1"></i> Pure Veg Deals Only</a>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="row g-4">
+        {% for item in listings %}
+        <div class="col-lg-4 col-md-6">
+            <div class="card sb-card h-100 d-flex flex-column border-top border-4 border-danger">
+                <div class="position-relative">
+                    <img src="{{ item.image_url|default:'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=500' }}" alt="{{ item.food_name }}" class="card-img-top" style="height: 180px; object-fit: cover;">
+                    <span class="position-absolute top-0 start-0 m-2 badge bg-danger fs-6 px-2 py-1">
+                        {{ item.discount_percent }}% OFF
+                    </span>
+                    <span class="position-absolute top-0 end-0 m-2">
+                        {% if item.is_veg %}
+                        <span class="diet-indicator veg"><span class="dot"></span></span>
+                        {% else %}
+                        <span class="diet-indicator nonveg"><span class="dot"></span></span>
+                        {% endif %}
+                    </span>
+                </div>
+
+                <div class="card-body p-3 d-flex flex-column flex-grow-1">
+                    <h5 class="fw-bold mb-1">{{ item.food_name }}</h5>
+                    <small class="text-muted mb-2"><i class="fa-solid fa-store me-1"></i> {{ item.restaurant.name }}</small>
+                    <p class="small text-secondary mb-3 flex-grow-1">{{ item.description }}</p>
+
+                    <div class="p-2 bg-light rounded border mb-3 small">
+                        <div class="d-flex justify-content-between text-muted mb-1">
+                            <span><i class="fa-solid fa-box-archive text-primary me-1"></i> Remaining Portions:</span>
+                            <strong>{{ item.available_quantity }} left</strong>
+                        </div>
+                        <div class="d-flex justify-content-between text-danger">
+                            <span><i class="fa-solid fa-stopwatch me-1"></i> Pickup Deadline:</span>
+                            <strong>{{ item.pickup_deadline|date:"h:i A (Today)" }}</strong>
+                        </div>
+                    </div>
+
+                    <div class="mt-auto d-flex justify-content-between align-items-center pt-2 border-top">
+                        <div>
+                            <span class="fs-4 fw-bold text-success">₹{{ item.discounted_price }}</span>
+                            <span class="small text-muted text-decoration-line-through ms-1">₹{{ item.original_price }}</span>
+                        </div>
+                        <a href="{% url 'surplus_food:book_surplus' item.id %}" class="btn btn-danger btn-sm px-3">
+                            <i class="fa-solid fa-bookmark me-1"></i> Reserve Now
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12 text-center py-5">
+            <i class="fa-solid fa-shield-halved fa-3x text-success mb-3"></i>
+            <h5>All surplus food rescued or none currently listed!</h5>
+            <p class="text-muted">Check back around 3 PM - 8 PM when outlets list extra portions.</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
+

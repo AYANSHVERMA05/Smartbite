@@ -1,0 +1,229 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}SmartBite — Smart Food Ordering & Management{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- Clean Minimal Hero -->
+    <div class="hero-minimal shadow-sm">
+        <div class="row align-items-center g-4">
+            <div class="col-lg-7">
+                <span class="badge bg-light text-dark border px-3 py-1 mb-3 fw-semibold">
+                    Fresh Campus Dining & Meal Management
+                </span>
+                <h1 class="display-5 fw-bold mb-3" style="letter-spacing: -0.03em; color: var(--sb-dark);">
+                    Delicious meals, planned within your budget.
+                </h1>
+                <p class="text-secondary lead fs-6 mb-4" style="max-width: 520px;">
+                    Order from verified campus canteens, plan full-day meals to save money, order together with roommates, and rescue discounted surplus food.
+                </p>
+                <div class="d-flex flex-wrap gap-2">
+                    <a href="{% url 'menu:food_list' %}" class="btn btn-sb-orange px-4 py-2">
+                        Explore Menu <i class="fa-solid fa-arrow-right ms-1"></i>
+                    </a>
+                    <a href="{% url 'budget_planner:planner' %}" class="btn btn-outline-secondary px-4 py-2">
+                        Budget Planner
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-5 text-center d-none d-lg-block">
+                <img src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=600" alt="Delicious Food" class="img-fluid rounded-4 shadow-sm" style="max-height: 270px; object-fit: cover;">
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Features Strip -->
+    <div class="row g-3 mb-5">
+        <div class="col-md-3 col-6">
+            <div class="p-3 bg-white rounded-3 border text-start h-100">
+                <div class="p-2 rounded bg-light d-inline-flex mb-2 text-success">
+                    <i class="fa-solid fa-wallet fa-lg"></i>
+                </div>
+                <h6 class="fw-bold mb-1">Budget Planner</h6>
+                <small class="text-muted">3-meal combinations optimized for your daily budget.</small>
+            </div>
+        </div>
+        <div class="col-md-3 col-6">
+            <div class="p-3 bg-white rounded-3 border text-start h-100">
+                <div class="p-2 rounded bg-light d-inline-flex mb-2 text-primary">
+                    <i class="fa-solid fa-users fa-lg"></i>
+                </div>
+                <h6 class="fw-bold mb-1">Group Orders</h6>
+                <small class="text-muted">Shared carts with room codes and split bill calculation.</small>
+            </div>
+        </div>
+        <div class="col-md-3 col-6">
+            <div class="p-3 bg-white rounded-3 border text-start h-100">
+                <div class="p-2 rounded bg-light d-inline-flex mb-2 text-danger">
+                    <i class="fa-solid fa-leaf fa-lg"></i>
+                </div>
+                <h6 class="fw-bold mb-1">Surplus Meals</h6>
+                <small class="text-muted">Fresh extra batches discounted up to 50% to cut waste.</small>
+            </div>
+        </div>
+        <div class="col-md-3 col-6">
+            <div class="p-3 bg-white rounded-3 border text-start h-100">
+                <div class="p-2 rounded bg-light d-inline-flex mb-2 text-info">
+                    <i class="fa-solid fa-calendar-check fa-lg"></i>
+                </div>
+                <h6 class="fw-bold mb-1">Mess Plans</h6>
+                <small class="text-muted">Weekly and monthly meal subscriptions delivered daily.</small>
+            </div>
+        </div>
+    </div>
+
+    <!-- Food Categories -->
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h5 class="fw-bold text-dark mb-0">Browse by Category</h5>
+        <a href="{% url 'menu:food_list' %}" class="text-decoration-none small fw-semibold" style="color: var(--sb-orange);">View All &rarr;</a>
+    </div>
+    <div class="row g-3 mb-5">
+        {% for cat in featured_categories %}
+        <div class="col-6 col-md-4 col-lg-2">
+            <a href="{% url 'menu:food_list' %}?category={{ cat.id }}" class="text-decoration-none text-dark">
+                <div class="card sb-card text-center p-3 h-100 border">
+                    <div class="mb-2 text-center">
+                        <i class="fa-solid {{ cat.icon|default:'fa-utensils' }} fa-xl" style="color: var(--sb-orange);"></i>
+                    </div>
+                    <span class="fw-semibold small">{{ cat.name }}</span>
+                </div>
+            </a>
+        </div>
+        {% empty %}
+        <p class="text-muted small">No categories loaded yet.</p>
+        {% endfor %}
+    </div>
+
+    <!-- Surplus Food Spotlight Banner -->
+    {% if active_surplus %}
+    <div class="card border mb-5 rounded-4 overflow-hidden shadow-sm bg-white">
+        <div class="card-body p-4">
+            <div class="d-flex flex-wrap justify-content-between align-items-center mb-3">
+                <div>
+                    <span class="badge bg-danger-subtle text-danger border border-danger mb-1">Surplus Food Deals</span>
+                    <h5 class="fw-bold text-dark mb-0">Rescue Fresh Extra Meals at Discounted Prices</h5>
+                    <p class="small text-muted mb-0">Fresh food prepared today available before the pickup deadline.</p>
+                </div>
+                <a href="{% url 'surplus_food:surplus_list' %}" class="btn btn-outline-danger btn-sm mt-2 mt-md-0 fw-semibold">View All Deals</a>
+            </div>
+
+            <div class="row g-3">
+                {% for item in active_surplus %}
+                <div class="col-md-3 col-sm-6">
+                    <div class="card h-100 border rounded-3 p-3">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <span class="badge bg-danger">{{ item.discount_percent }}% OFF</span>
+                            <small class="text-muted"><i class="fa-regular fa-clock me-1"></i> Today</small>
+                        </div>
+                        <h6 class="fw-bold mb-1 text-truncate">{{ item.food_name }}</h6>
+                        <small class="text-muted mb-2 d-block">{{ item.restaurant.name }}</small>
+                        <div class="d-flex justify-content-between align-items-center mt-auto pt-2 border-top">
+                            <div>
+                                <span class="fw-bold text-dark fs-6">₹{{ item.discounted_price }}</span>
+                                <span class="small text-muted text-decoration-line-through ms-1">₹{{ item.original_price }}</span>
+                            </div>
+                            <a href="{% url 'surplus_food:book_surplus' item.id %}" class="btn btn-outline-danger btn-sm py-1 px-2">Reserve</a>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Popular Dishes -->
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <div>
+            <h5 class="fw-bold text-dark mb-0">Popular Dishes</h5>
+            <small class="text-muted">Most ordered dishes across campus canteens</small>
+        </div>
+        <a href="{% url 'menu:food_list' %}" class="text-decoration-none small fw-semibold" style="color: var(--sb-orange);">Full Menu &rarr;</a>
+    </div>
+
+    <div class="row g-4 mb-5">
+        {% for food in popular_foods %}
+        <div class="col-lg-3 col-md-6">
+            <div class="card sb-card h-100 d-flex flex-column">
+                <div class="food-card-img-wrapper position-relative">
+                    {% if food.image_url %}
+                    <img src="{{ food.image_url }}" alt="{{ food.name }}" class="food-card-img">
+                    {% else %}
+                    <div class="d-flex align-items-center justify-content-center h-100 bg-light text-muted">
+                        <i class="fa-solid fa-bowl-food fa-2x"></i>
+                    </div>
+                    {% endif %}
+                    <span class="position-absolute top-0 start-0 m-2">
+                        {% if food.is_veg %}
+                        <span class="diet-indicator veg" title="Vegetarian"><span class="dot"></span></span>
+                        {% else %}
+                        <span class="diet-indicator nonveg" title="Non-Vegetarian"><span class="dot"></span></span>
+                        {% endif %}
+                    </span>
+                    <span class="position-absolute top-0 end-0 m-2 badge bg-dark opacity-75 small">
+                        {{ food.preparation_time }} mins
+                    </span>
+                </div>
+
+                <div class="card-body p-3 d-flex flex-column flex-grow-1">
+                    <div class="d-flex justify-content-between align-items-start mb-1">
+                        <h6 class="fw-bold mb-0 text-truncate" title="{{ food.name }}">{{ food.name }}</h6>
+                        <span class="badge bg-light text-dark border small"><i class="fa-solid fa-star text-warning me-1"></i>{{ food.average_rating }}</span>
+                    </div>
+                    <small class="text-muted mb-2">{{ food.restaurant.name }}</small>
+                    <p class="small text-secondary mb-3 text-truncate-2" style="font-size: 0.84rem; height: 38px; overflow: hidden;">
+                        {{ food.description }}
+                    </p>
+
+                    {% if food.nutrition %}
+                    <div class="d-flex gap-2 small text-muted mb-3" style="font-size: 0.76rem;">
+                        <span class="badge bg-light text-secondary border">{{ food.nutrition.calories }} kcal</span>
+                        <span class="badge bg-light text-secondary border">{{ food.nutrition.protein }}g Protein</span>
+                    </div>
+                    {% endif %}
+
+                    <div class="mt-auto d-flex justify-content-between align-items-center pt-2 border-top">
+                        <span class="price-tag">₹{{ food.price }}</span>
+                        <div class="d-flex gap-1">
+                            <a href="{% url 'menu:food_detail' food.id %}" class="btn btn-outline-secondary btn-sm py-1 px-2" title="Details">
+                                <i class="fa-solid fa-circle-info"></i>
+                            </a>
+                            <a href="{% url 'orders:add_to_cart' food.id %}" class="btn btn-sb-orange btn-sm py-1 px-3">
+                                + Add
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <p class="text-muted small">No dishes listed yet.</p>
+        {% endfor %}
+    </div>
+
+    <!-- Campus Outlets -->
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h5 class="fw-bold text-dark mb-0">Campus Dining Outlets</h5>
+        <a href="{% url 'restaurants:restaurant_list' %}" class="text-decoration-none small fw-semibold" style="color: var(--sb-orange);">All Restaurants &rarr;</a>
+    </div>
+
+    <div class="row g-4 mb-4">
+        {% for r in featured_restaurants %}
+        <div class="col-md-6 col-lg-3">
+            <div class="card sb-card h-100">
+                <img src="{{ r.image_url|default:'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=500' }}" class="card-img-top" alt="{{ r.name }}" style="height: 130px; object-fit: cover;">
+                <div class="card-body p-3">
+                    <h6 class="fw-bold mb-1 text-truncate">{{ r.name }}</h6>
+                    <small class="text-muted d-block mb-2">{{ r.cuisine_type }} &bull; {{ r.address }}</small>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span class="badge bg-light text-dark border small"><i class="fa-solid fa-star text-warning me-1"></i>{{ r.rating }}</span>
+                        <a href="{% url 'restaurants:restaurant_detail' r.id %}" class="btn btn-outline-sb-green btn-sm py-1 px-2">Menu</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

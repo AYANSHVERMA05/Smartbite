@@ -1,0 +1,107 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ title }} - SmartBite{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card sb-card">
+                <div class="card-header bg-white py-3 border-bottom d-flex justify-content-between align-items-center">
+                    <h5 class="fw-bold mb-0">
+                        <i class="fa-solid fa-utensils text-warning me-2"></i>{{ title }}
+                    </h5>
+                    <a href="{% url 'dashboard:owner_dashboard' %}" class="btn btn-outline-secondary btn-sm">Back to Dashboard</a>
+                </div>
+
+                <div class="card-body p-4">
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="row g-3">
+                            <div class="col-md-8">
+                                <label class="form-label fw-semibold">Dish Name <span class="text-danger">*</span></label>
+                                {{ form.name }}
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label fw-semibold">Category <span class="text-danger">*</span></label>
+                                {{ form.category }}
+                            </div>
+
+                            <div class="col-md-4">
+                                <label class="form-label fw-semibold">Price (₹) <span class="text-danger">*</span></label>
+                                {{ form.price }}
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label fw-semibold">Meal Type <span class="text-danger">*</span></label>
+                                {{ form.meal_type }}
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label fw-semibold">Preparation Time (Mins)</label>
+                                {{ form.preparation_time }}
+                            </div>
+
+                            <div class="col-12">
+                                <label class="form-label fw-semibold">Description</label>
+                                {{ form.description }}
+                            </div>
+
+                            <div class="col-12">
+                                <label class="form-label fw-semibold">Image URL (Direct Web Link)</label>
+                                {{ form.image_url }}
+                                <div class="form-text">Paste an image link from Unsplash or CDN for dish photo.</div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-check form-switch mt-2">
+                                    {{ form.is_veg }}
+                                    <label class="form-check-label fw-semibold ms-2">Is Pure Vegetarian?</label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-check form-switch mt-2">
+                                    {{ form.is_available }}
+                                    <label class="form-check-label fw-semibold ms-2">Currently Available to Order</label>
+                                </div>
+                            </div>
+
+                            <!-- Nutrition Details Section -->
+                            <div class="col-12 mt-4 pt-3 border-top">
+                                <h6 class="fw-bold mb-2 text-success">
+                                    <i class="fa-solid fa-heart-pulse me-1"></i> Nutrition Information (Per Serving)
+                                </h6>
+                                <p class="small text-muted mb-3">Enables health filtering and smart meal recommendations for campus students.</p>
+                                <div class="row g-2">
+                                    <div class="col-md-3 col-6">
+                                        <label class="form-label small fw-semibold">Calories (kcal)</label>
+                                        <input type="number" name="calories" class="form-control" value="{{ nutrition.calories|default:'350' }}" required>
+                                    </div>
+                                    <div class="col-md-3 col-6">
+                                        <label class="form-label small fw-semibold">Protein (g)</label>
+                                        <input type="number" step="0.1" name="protein" class="form-control" value="{{ nutrition.protein|default:'12.0' }}" required>
+                                    </div>
+                                    <div class="col-md-3 col-6">
+                                        <label class="form-label small fw-semibold">Carbs (g)</label>
+                                        <input type="number" step="0.1" name="carbohydrates" class="form-control" value="{{ nutrition.carbohydrates|default:'45.0' }}" required>
+                                    </div>
+                                    <div class="col-md-3 col-6">
+                                        <label class="form-label small fw-semibold">Fat (g)</label>
+                                        <input type="number" step="0.1" name="fat" class="form-control" value="{{ nutrition.fat|default:'10.0' }}" required>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mt-4 pt-3 border-top text-end">
+                            <a href="{% url 'dashboard:owner_dashboard' %}" class="btn btn-outline-secondary me-2">Cancel</a>
+                            <button type="submit" class="btn btn-sb-green px-4">
+                                <i class="fa-solid fa-floppy-disk me-1"></i> Save Dish to Menu
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

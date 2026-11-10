@@ -1,0 +1,125 @@
+{% extends 'base.html' %}
+
+{% block title %}My Food Cart - SmartBite{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <h3 class="fw-bold mb-3"><i class="fa-solid fa-cart-shopping me-2 text-warning"></i>Your Food Cart</h3>
+
+    {% if cart_items %}
+    <div class="row g-4">
+        <!-- Cart Items List -->
+        <div class="col-lg-8">
+            <div class="card sb-card p-3">
+                {% if is_multi_restaurant %}
+                <div class="alert alert-info py-2 small mb-3">
+                    <i class="fa-solid fa-circle-info me-1"></i> You have items from multiple outlets. Your order will be placed with the primary outlet, or you may checkout separately.
+                </div>
+                {% endif %}
+
+                <div class="table-responsive">
+                    <table class="table align-middle mb-0">
+                        <thead class="table-light small">
+                            <tr>
+                                <th>Item</th>
+                                <th>Restaurant</th>
+                                <th>Price</th>
+                                <th>Quantity</th>
+                                <th>Subtotal</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in cart_items %}
+                            <tr>
+                                <td>
+                                    <div class="d-flex align-items-center gap-2">
+                                        {% if item.food_item.is_veg %}
+                                        <span class="diet-indicator veg"><span class="dot"></span></span>
+                                        {% else %}
+                                        <span class="diet-indicator nonveg"><span class="dot"></span></span>
+                                        {% endif %}
+                                        <div>
+                                            <strong class="d-block">{{ item.food_item.name }}</strong>
+                                            {% if item.food_item.nutrition %}
+                                            <small class="text-muted">{{ item.food_item.nutrition.calories }} kcal</small>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="small text-muted">{{ item.food_item.restaurant.name }}</td>
+                                <td class="fw-semibold">₹{{ item.food_item.price }}</td>
+                                <td>
+                                    <form method="post" action="{% url 'orders:update_cart_item' item.id %}" class="d-flex align-items-center gap-1">
+                                        {% csrf_token %}
+                                        <button type="submit" name="action" value="decrement" class="btn btn-sm btn-outline-secondary px-2 py-0">-</button>
+                                        <span class="fw-bold px-2">{{ item.quantity }}</span>
+                                        <button type="submit" name="action" value="increment" class="btn btn-sm btn-outline-secondary px-2 py-0">+</button>
+                                    </form>
+                                </td>
+                                <td class="fw-bold text-success">₹{{ item.item_total }}</td>
+                                <td>
+                                    <a href="{% url 'orders:remove_from_cart' item.id %}" class="text-danger small" title="Remove Item">
+                                        <i class="fa-solid fa-trash-can"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="p-3 bg-light border-top d-flex justify-content-between align-items-center mt-3 rounded">
+                    <a href="{% url 'menu:food_list' %}" class="text-decoration-none small fw-bold" style="color: var(--sb-orange);">
+                        <i class="fa-solid fa-arrow-left me-1"></i> Add More Food Items
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bill Summary Card -->
+        <div class="col-lg-4">
+            <div class="card sb-card p-4">
+                <h5 class="fw-bold mb-3 border-bottom pb-2">Order Summary</h5>
+                <div class="d-flex justify-content-between mb-2">
+                    <span class="text-muted">Total Food Items:</span>
+                    <span>{{ cart.total_items }}</span>
+                </div>
+                <div class="d-flex justify-content-between mb-2">
+                    <span class="text-muted">Subtotal:</span>
+                    <span class="fw-semibold">₹{{ cart.total_price }}</span>
+                </div>
+                <div class="d-flex justify-content-between mb-2">
+                    <span class="text-muted">Campus Hostel Delivery:</span>
+                    <span class="text-success fw-bold">FREE</span>
+                </div>
+                <hr>
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <strong class="fs-5">Grand Total:</strong>
+                    <strong class="fs-4 text-success">₹{{ cart.total_price }}</strong>
+                </div>
+
+                <div class="mb-3 p-2 bg-light rounded text-center small text-muted">
+                    <i class="fa-solid fa-hand-holding-dollar text-success me-1"></i> Cash on Delivery Available
+                </div>
+
+                <a href="{% url 'orders:checkout' %}" class="btn btn-sb-green w-100 py-2 fw-bold fs-6">
+                    Proceed to Checkout <i class="fa-solid fa-arrow-right ms-1"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="card sb-card p-5 text-center">
+        <i class="fa-solid fa-cart-shopping fa-3x text-muted mb-3"></i>
+        <h4>Your cart is empty!</h4>
+        <p class="text-muted mb-4">Hungry? Explore delicious food from our campus restaurants.</p>
+        <div>
+            <a href="{% url 'menu:food_list' %}" class="btn btn-sb-orange px-4">Browse Menu</a>
+            <a href="{% url 'budget_planner:planner' %}" class="btn btn-outline-sb-green px-4 ms-2">Smart Budget Planner</a>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+

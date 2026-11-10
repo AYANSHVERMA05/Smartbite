@@ -1,0 +1,175 @@
+{% extends 'base.html' %}
+
+{% block title %}Smart Budget Meal Planner - SmartBite{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Clean Minimal Header -->
+    <div class="card sb-card p-4 mb-4 border bg-white">
+        <div class="row align-items-center">
+            <div class="col-lg-8">
+                <h3 class="fw-bold mb-1">Smart Budget Meal Planner</h3>
+                <p class="text-secondary small mb-0">
+                    Set your daily food budget limit to discover balanced Breakfast, Lunch, and Dinner combinations.
+                </p>
+            </div>
+            <div class="col-lg-4 text-lg-end mt-3 mt-lg-0">
+                <div class="p-2 px-3 bg-light rounded-3 d-inline-block border text-center">
+                    <small class="text-muted d-block">Current Target</small>
+                    <span class="fs-4 fw-bold text-success">₹{{ budget }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Input Form Card -->
+    <div class="card sb-card p-4 mb-4 border-0 shadow-sm">
+        <form method="get" class="row g-3 align-items-end">
+            <div class="col-md-5">
+                <label class="form-label fw-bold">Your Daily Food Budget (₹)</label>
+                <div class="input-group">
+                    <span class="input-group-text bg-white">₹</span>
+                    <input type="number" name="budget" value="{{ budget }}" min="50" max="2000" step="10" class="form-control form-control-lg fw-bold text-success" required>
+                </div>
+                <div class="form-text">Try ₹200, ₹350 or ₹500 to see different meal combinations.</div>
+            </div>
+
+            <div class="col-md-4">
+                <label class="form-label fw-bold">Dietary Filter</label>
+                <select name="diet" class="form-select form-select-lg">
+                    <option value="ALL" {% if diet == 'ALL' %}selected{% endif %}>All Foods (Veg & Non-Veg)</option>
+                    <option value="VEG" {% if diet == 'VEG' %}selected{% endif %}>Pure Vegetarian Combos Only</option>
+                </select>
+                <div class="form-text">Filters meals based on your diet preferences.</div>
+            </div>
+
+            <div class="col-md-3">
+                <button type="submit" class="btn btn-sb-orange btn-lg w-100">
+                    <i class="fa-solid fa-wand-magic-sparkles me-1"></i> Generate Plans
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Generated Meal Plan Combos -->
+    <h4 class="fw-bold mb-3"><i class="fa-solid fa-layer-group text-primary me-2"></i>Suggested 3-Meal Daily Combos</h4>
+
+    <div class="row g-4 mb-5">
+        {% for plan in meal_plans %}
+        <div class="col-lg-4 col-md-6">
+            <div class="card sb-card h-100 d-flex flex-column border-top border-4 border-success">
+                <div class="card-header bg-white pt-3 pb-2 border-bottom">
+                    <div class="d-flex justify-content-between align-items-center mb-1">
+                        <span class="badge {{ plan.badge_class }}">{{ plan.plan_title }}</span>
+                        <span class="badge bg-light text-dark border">Score: {{ plan.score|floatformat:0 }} pts</span>
+                    </div>
+                    <small class="text-muted d-block">{{ plan.description }}</small>
+                </div>
+
+                <div class="card-body p-3 d-flex flex-column flex-grow-1">
+                    <!-- Breakfast -->
+                    <div class="p-2 rounded bg-light mb-2 border">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <span class="badge bg-warning text-dark small me-1">Breakfast</span>
+                                <strong class="small d-block text-truncate mt-1" style="max-width: 180px;">{{ plan.breakfast.name }}</strong>
+                                <small class="text-muted" style="font-size: 0.75rem;">{{ plan.breakfast.restaurant.name }}</small>
+                            </div>
+                            <span class="fw-bold text-success">₹{{ plan.breakfast.price }}</span>
+                        </div>
+                    </div>
+
+                    <!-- Lunch -->
+                    <div class="p-2 rounded bg-light mb-2 border">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <span class="badge bg-primary small me-1">Lunch</span>
+                                <strong class="small d-block text-truncate mt-1" style="max-width: 180px;">{{ plan.lunch.name }}</strong>
+                                <small class="text-muted" style="font-size: 0.75rem;">{{ plan.lunch.restaurant.name }}</small>
+                            </div>
+                            <span class="fw-bold text-success">₹{{ plan.lunch.price }}</span>
+                        </div>
+                    </div>
+
+                    <!-- Dinner -->
+                    <div class="p-2 rounded bg-light mb-3 border">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <span class="badge bg-dark small me-1">Dinner</span>
+                                <strong class="small d-block text-truncate mt-1" style="max-width: 180px;">{{ plan.dinner.name }}</strong>
+                                <small class="text-muted" style="font-size: 0.75rem;">{{ plan.dinner.restaurant.name }}</small>
+                            </div>
+                            <span class="fw-bold text-success">₹{{ plan.dinner.price }}</span>
+                        </div>
+                    </div>
+
+                    <!-- Nutrition Summary -->
+                    <div class="d-flex justify-content-between small text-muted mb-3 py-1 px-2 bg-light rounded">
+                        <span><i class="fa-solid fa-fire text-danger me-1"></i>{{ plan.total_calories }} kcal</span>
+                        <span><i class="fa-solid fa-dumbbell text-primary me-1"></i>{{ plan.total_protein }}g Protein</span>
+                    </div>
+
+                    <!-- Cost & Savings Breakdown -->
+                    <div class="mt-auto pt-2 border-top">
+                        <div class="d-flex justify-content-between align-items-center mb-1">
+                            <span class="text-muted small">Total Cost:</span>
+                            <span class="fw-bold fs-5 text-dark">₹{{ plan.total_cost }}</span>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <span class="text-muted small">Remaining Savings:</span>
+                            <span class="badge bg-success-subtle text-success border border-success">₹{{ plan.remaining_budget }} Saved</span>
+                        </div>
+
+                        <!-- One-Click Add to Cart -->
+                        <form method="post" action="{% url 'budget_planner:add_combo_to_cart' %}">
+                            {% csrf_token %}
+                            <input type="hidden" name="breakfast_id" value="{{ plan.breakfast.id }}">
+                            <input type="hidden" name="lunch_id" value="{{ plan.lunch.id }}">
+                            <input type="hidden" name="dinner_id" value="{{ plan.dinner.id }}">
+                            <button type="submit" class="btn btn-sb-green w-100 py-2">
+                                <i class="fa-solid fa-cart-plus me-1"></i> Order Full Day Combo
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12 text-center py-4">
+            <div class="p-4 bg-light rounded-3 border">
+                <i class="fa-solid fa-circle-exclamation fa-2x text-warning mb-2"></i>
+                <h5>No valid 3-meal combinations found for ₹{{ budget }}.</h5>
+                <p class="text-muted">Try increasing your budget or switching to All Foods filter.</p>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Affordable Individual Foods Under Budget -->
+    <h4 class="fw-bold mb-3"><i class="fa-solid fa-tags text-success me-2"></i>Affordable Individual Dishes Under ₹{{ budget }}</h4>
+    <div class="row g-3">
+        {% for item in items_under_budget %}
+        <div class="col-md-4 col-lg-3">
+            <div class="card sb-card p-3 h-100 d-flex flex-column">
+                <div class="d-flex justify-content-between align-items-start mb-1">
+                    <h6 class="fw-bold mb-0 text-truncate" title="{{ item.name }}">{{ item.name }}</h6>
+                    {% if item.is_veg %}
+                    <span class="diet-indicator veg"><span class="dot"></span></span>
+                    {% else %}
+                    <span class="diet-indicator nonveg"><span class="dot"></span></span>
+                    {% endif %}
+                </div>
+                <small class="text-muted mb-2">{{ item.restaurant.name }}</small>
+                <div class="mt-auto d-flex justify-content-between align-items-center pt-2 border-top">
+                    <span class="fw-bold text-success fs-6">₹{{ item.price }}</span>
+                    <a href="{% url 'orders:add_to_cart' item.id %}" class="btn btn-outline-sb-orange btn-sm">Add to Cart</a>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <p class="text-muted">No items found.</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
+

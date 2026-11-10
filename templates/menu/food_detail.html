@@ -1,0 +1,178 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ item.name }} - SmartBite{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <nav aria-label="breadcrumb" class="mb-3">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'menu:home' %}">Home</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'menu:food_list' %}">Menu</a></li>
+            <li class="breadcrumb-item active">{{ item.name }}</li>
+        </ol>
+    </nav>
+
+    <div class="row g-4 mb-5">
+        <div class="col-md-5">
+            <div class="card sb-card overflow-hidden">
+                <img src="{{ item.image_url|default:'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=700' }}" alt="{{ item.name }}" class="img-fluid w-100" style="height: 340px; object-fit: cover;">
+            </div>
+        </div>
+
+        <div class="col-md-7">
+            <div class="card sb-card p-4 h-100">
+                <div class="d-flex justify-content-between align-items-start mb-2">
+                    <div class="d-flex align-items-center gap-2">
+                        {% if item.is_veg %}
+                        <span class="diet-indicator veg" title="Vegetarian"><span class="dot"></span></span>
+                        <span class="badge bg-success-subtle text-success border border-success">Vegetarian</span>
+                        {% else %}
+                        <span class="diet-indicator nonveg" title="Non-Vegetarian"><span class="dot"></span></span>
+                        <span class="badge bg-danger-subtle text-danger border border-danger">Non-Vegetarian</span>
+                        {% endif %}
+                        <span class="badge bg-light text-dark border">{{ item.category.name }}</span>
+                        <span class="badge bg-light text-dark border">{{ item.get_meal_type_display }}</span>
+                    </div>
+                    <span class="badge bg-warning text-dark"><i class="fa-solid fa-star"></i> {{ item.average_rating }} / 5.0</span>
+                </div>
+
+                <h2 class="fw-bold mb-1">{{ item.name }}</h2>
+                <h6 class="text-muted mb-3">
+                    <i class="fa-solid fa-store me-1"></i> Offered by 
+                    <a href="{% url 'restaurants:restaurant_detail' item.restaurant.id %}" class="text-decoration-none fw-semibold" style="color: var(--sb-green-dark);">
+                        {{ item.restaurant.name }}
+                    </a>
+                </h6>
+
+                <div class="mb-3">
+                    <span class="price-tag text-success fs-2">₹{{ item.price }}</span>
+                    <span class="small text-muted ms-2">(Inclusive of campus taxes & packaging)</span>
+                </div>
+
+                <p class="text-secondary mb-4">{{ item.description }}</p>
+
+                <!-- Nutrition Breakdown Box -->
+                {% if item.nutrition %}
+                <div class="p-3 bg-light rounded-3 mb-4 border">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span class="fw-bold small text-dark"><i class="fa-solid fa-heart-pulse text-danger me-1"></i> Nutritional Breakdown (Per Serving)</span>
+                        {% if item.nutrition.dietary_tags %}
+                        <span class="badge bg-success">{{ item.nutrition.dietary_tags }}</span>
+                        {% endif %}
+                    </div>
+                    <div class="row text-center g-2">
+                        <div class="col-3">
+                            <div class="bg-white p-2 rounded border">
+                                <small class="text-muted d-block">Calories</small>
+                                <strong class="text-danger">{{ item.nutrition.calories }}</strong> <small>kcal</small>
+                            </div>
+                        </div>
+                        <div class="col-3">
+                            <div class="bg-white p-2 rounded border">
+                                <small class="text-muted d-block">Protein</small>
+                                <strong class="text-primary">{{ item.nutrition.protein }}</strong> <small>g</small>
+                            </div>
+                        </div>
+                        <div class="col-3">
+                            <div class="bg-white p-2 rounded border">
+                                <small class="text-muted d-block">Carbs</small>
+                                <strong class="text-warning">{{ item.nutrition.carbohydrates }}</strong> <small>g</small>
+                            </div>
+                        </div>
+                        <div class="col-3">
+                            <div class="bg-white p-2 rounded border">
+                                <small class="text-muted d-block">Fats</small>
+                                <strong class="text-secondary">{{ item.nutrition.fat }}</strong> <small>g</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Actions -->
+                <div class="d-flex gap-3 mt-auto">
+                    <a href="{% url 'orders:add_to_cart' item.id %}" class="btn btn-sb-orange btn-lg px-4 flex-grow-1">
+                        <i class="fa-solid fa-cart-plus me-2"></i> Add to My Cart
+                    </a>
+                    <a href="{% url 'budget_planner:planner' %}" class="btn btn-outline-sb-green btn-lg" title="Find budget meal combos including this">
+                        <i class="fa-solid fa-wallet"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Customer Reviews Section -->
+    <div class="row g-4">
+        <div class="col-lg-7">
+            <div class="card sb-card p-4">
+                <h5 class="fw-bold mb-3"><i class="fa-solid fa-comments text-primary me-2"></i>Customer Reviews ({{ reviews|length }})</h5>
+
+                {% for r in reviews %}
+                <div class="border-bottom pb-3 mb-3">
+                    <div class="d-flex justify-content-between align-items-center mb-1">
+                        <strong>{{ r.user.username }}</strong>
+                        <span class="text-warning small">
+                            {% for i in "12345" %}
+                                {% if forloop.counter <= r.rating %}★{% else %}☆{% endif %}
+                            {% endfor %}
+                        </span>
+                    </div>
+                    <p class="small text-muted mb-1">{{ r.comment }}</p>
+                    <small class="text-secondary" style="font-size: 0.75rem;">{{ r.created_at|date:"M d, Y" }}</small>
+                </div>
+                {% empty %}
+                <p class="text-muted small">No reviews yet for this dish. Be the first to try it and leave a review!</p>
+                {% endfor %}
+
+                <!-- Add Review Form -->
+                {% if user.is_authenticated %}
+                <div class="mt-4 pt-3 border-top">
+                    <h6 class="fw-bold mb-2">Leave a Rating & Review</h6>
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="mb-2">
+                            <label class="form-label small fw-semibold">Your Rating</label>
+                            {{ review_form.rating }}
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold">Your Feedback</label>
+                            {{ review_form.comment }}
+                        </div>
+                        <button type="submit" class="btn btn-sb-green btn-sm px-3">Submit Review</button>
+                    </form>
+                </div>
+                {% else %}
+                <div class="mt-3 p-3 bg-light rounded text-center small text-muted">
+                    Please <a href="{% url 'accounts:login' %}">sign in</a> to post a food review.
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Similar Dishes -->
+        <div class="col-lg-5">
+            <div class="card sb-card p-4">
+                <h6 class="fw-bold mb-3">Similar Dishes in {{ item.category.name }}</h6>
+                <div class="d-flex flex-column gap-3">
+                    {% for sim in similar_items %}
+                    <div class="d-flex align-items-center justify-content-between p-2 rounded bg-light border">
+                        <div class="d-flex align-items-center gap-2">
+                            <img src="{{ sim.image_url|default:'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=100' }}" alt="{{ sim.name }}" class="rounded" style="width: 50px; height: 50px; object-fit: cover;">
+                            <div>
+                                <h6 class="fw-bold mb-0 small text-truncate" style="max-width: 150px;">{{ sim.name }}</h6>
+                                <span class="small text-success fw-bold">₹{{ sim.price }}</span>
+                            </div>
+                        </div>
+                        <a href="{% url 'menu:food_detail' sim.id %}" class="btn btn-outline-secondary btn-sm">View</a>
+                    </div>
+                    {% empty %}
+                    <p class="small text-muted">No similar dishes found.</p>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

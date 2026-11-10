@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+
+{% block title %}Subscribe to {{ plan.name }} - SmartBite{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-md-7 col-lg-6">
+            <div class="card sb-card">
+                <div class="card-header bg-info text-dark py-3">
+                    <h5 class="fw-bold mb-0"><i class="fa-solid fa-calendar-check me-2"></i>Confirm Mess Plan Subscription</h5>
+                </div>
+                <div class="card-body p-4">
+                    <div class="mb-3">
+                        <h4 class="fw-bold mb-1">{{ plan.name }}</h4>
+                        <span class="text-muted small"><i class="fa-solid fa-store me-1"></i> {{ plan.restaurant.name }}</span>
+                    </div>
+
+                    <div class="p-3 bg-light rounded-3 mb-4 border">
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="text-muted">Duration:</span>
+                            <strong>{{ plan.get_duration_type_display }}</strong>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="text-muted">Meal Coverage:</span>
+                            <strong>{{ plan.get_meal_coverage_display }}</strong>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="text-muted">Plan Type:</span>
+                            <strong>{{ plan.get_plan_type_display }}</strong>
+                        </div>
+                        <hr class="my-2">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="fw-bold">Total Subscription Fee:</span>
+                            <span class="fs-4 fw-bold text-success">₹{{ plan.price }}</span>
+                        </div>
+                    </div>
+
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Hostel Block & Room for Daily Meal Delivery <span class="text-danger">*</span></label>
+                            <input type="text" name="hostel_address" value="{{ default_address }}" class="form-control" placeholder="e.g. Block C, Room 314, Tagore Hostel" required>
+                            <div class="form-text">Where meals should be delivered daily.</div>
+                        </div>
+
+                        <div class="d-flex gap-2">
+                            <a href="{% url 'subscriptions:plan_list' %}" class="btn btn-outline-secondary w-50">Back to Plans</a>
+                            <button type="submit" class="btn btn-sb-green w-50 fw-bold">
+                                Confirm & Activate Plan
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

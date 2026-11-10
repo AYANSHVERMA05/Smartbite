@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+
+{% block title %}Checkout - SmartBite{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card sb-card mb-4">
+                <div class="card-header bg-white py-3 border-bottom">
+                    <h4 class="fw-bold mb-0"><i class="fa-solid fa-truck-fast text-success me-2"></i>Campus Delivery Checkout</h4>
+                    <small class="text-muted">Review delivery address and confirm your Cash on Delivery (COD) order</small>
+                </div>
+
+                <div class="card-body p-4">
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="row g-3 mb-4">
+                            <div class="col-12">
+                                <label class="form-label fw-semibold">Hostel Block & Room / Delivery Address <span class="text-danger">*</span></label>
+                                <textarea name="delivery_address" class="form-control" rows="2" placeholder="e.g. Tagore Hostel, Block B, Room 204 or Library Garden" required>{{ default_address }}</textarea>
+                                <div class="form-text">Our campus delivery partner will deliver straight to your hostel gate/room.</div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Contact Phone Number <span class="text-danger">*</span></label>
+                                <input type="text" name="contact_phone" class="form-control" value="{{ phone }}" placeholder="+91 9876543210" required>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Payment Method</label>
+                                <div class="p-2 border rounded bg-light d-flex align-items-center">
+                                    <i class="fa-solid fa-money-bill-wave text-success fa-lg me-2"></i>
+                                    <strong>Cash on Delivery (COD)</strong>
+                                </div>
+                            </div>
+
+                            <div class="col-12">
+                                <label class="form-label fw-semibold">Special Delivery Instructions (Optional)</label>
+                                <input type="text" name="special_instructions" class="form-control" placeholder="e.g. Call once reached hostel reception; extra tissues please">
+                            </div>
+                        </div>
+
+                        <!-- Order Items Preview -->
+                        <div class="p-3 bg-light rounded-3 mb-4 border">
+                            <h6 class="fw-bold mb-2">Order Items from {{ restaurant.name }}</h6>
+                            <ul class="list-group list-group-flush bg-transparent">
+                                {% for ci in cart_items %}
+                                <li class="list-group-item bg-transparent d-flex justify-content-between align-items-center px-0 py-1">
+                                    <span>{{ ci.quantity }}x {{ ci.food_item.name }}</span>
+                                    <span class="fw-semibold">₹{{ ci.item_total }}</span>
+                                </li>
+                                {% endfor %}
+                            </ul>
+                            <div class="d-flex justify-content-between align-items-center pt-2 mt-2 border-top">
+                                <strong>Total Amount to Pay on Delivery:</strong>
+                                <strong class="fs-4 text-success">₹{{ cart.total_price }}</strong>
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-between align-items-center">
+                            <a href="{% url 'orders:view_cart' %}" class="btn btn-outline-secondary">Back to Cart</a>
+                            <button type="submit" class="btn btn-sb-green btn-lg px-4">
+                                <i class="fa-solid fa-check me-2"></i> Confirm & Place Order (COD)
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

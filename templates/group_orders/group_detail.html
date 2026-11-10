@@ -1,0 +1,152 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ group.title }} [{{ group.group_code }}] - SmartBite{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Group Top Bar -->
+    <div class="card sb-card p-4 mb-4 border-0 shadow">
+        <div class="d-flex flex-wrap justify-content-between align-items-center">
+            <div>
+                <div class="d-flex align-items-center gap-2 mb-1">
+                    <h3 class="fw-bold mb-0">{{ group.title }}</h3>
+                    <span class="badge {% if group.status == 'OPEN' %}bg-success{% elif group.status == 'PLACED' %}bg-secondary{% else %}bg-warning text-dark{% endif %}">
+                        {{ group.get_status_display }}
+                    </span>
+                </div>
+                <p class="text-muted small mb-0">
+                    <i class="fa-solid fa-store text-danger me-1"></i> {{ group.restaurant.name }} &bull; Host: <strong>{{ group.host.username }}</strong>
+                </p>
+            </div>
+
+            <!-- Invitation Code Display -->
+            <div class="mt-3 mt-md-0 p-3 bg-light rounded-3 text-center border">
+                <small class="text-muted d-block fw-bold" style="font-size: 0.75rem;">GROUP INVITATION CODE</small>
+                <span class="fs-3 fw-bold text-primary letter-spacing" id="groupCodeText">{{ group.group_code }}</span>
+                <div class="mt-1">
+                    <button class="btn btn-sm btn-outline-primary py-0" onclick="navigator.clipboard.writeText('{{ group.group_code }}'); alert('Code copied to clipboard!');">
+                        <i class="fa-regular fa-copy me-1"></i> Copy Code
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <!-- Members Plates & Bill Split Breakdown -->
+        <div class="col-lg-7">
+            <div class="card sb-card p-4 mb-4">
+                <div class="d-flex justify-content-between align-items-center mb-3 border-bottom pb-2">
+                    <h5 class="fw-bold mb-0"><i class="fa-solid fa-users text-primary me-2"></i>Members & Bill Split Breakdown</h5>
+                    <span class="badge bg-secondary">{{ breakdown|length }} Members</span>
+                </div>
+
+                {% for b in breakdown %}
+                <div class="p-3 bg-light rounded-3 mb-3 border">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <div>
+                            <strong>{{ b.member.user.username }}</strong>
+                            {% if b.member.user == group.host %}
+                            <span class="badge bg-warning text-dark ms-1 small">Host</span>
+                            {% endif %}
+                            {% if b.member.user == user %}
+                            <span class="badge bg-info text-dark ms-1 small">You</span>
+                            {% endif %}
+                        </div>
+                        <span class="fw-bold text-success">Contribution: ₹{{ b.total }}</span>
+                    </div>
+
+                    <!-- Items this member ordered -->
+                    <ul class="list-group list-group-flush bg-transparent">
+                        {% for item in b.items %}
+                        <li class="list-group-item bg-transparent d-flex justify-content-between align-items-center py-1 px-0 small">
+                            <span>
+                                {{ item.quantity }}x {{ item.food_item.name }}
+                                {% if item.special_notes %}
+                                <em class="text-muted">({{ item.special_notes }})</em>
+                                {% endif %}
+                            </span>
+                            <div>
+                                <span class="fw-semibold me-2">₹{{ item.item_total }}</span>
+                                {% if item.member.user == user or is_host %}
+                                {% if group.status == 'OPEN' %}
+                                <a href="{% url 'group_orders:remove_group_item' item.id %}" class="text-danger small" title="Remove Item"><i class="fa-solid fa-trash-can"></i></a>
+                                {% endif %}
+                                {% endif %}
+                            </div>
+                        </li>
+                        {% empty %}
+                        <li class="list-group-item bg-transparent py-1 px-0 small text-muted">No items added yet.</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% endfor %}
+
+                <!-- Master Bill & Checkout Action -->
+                <div class="p-3 bg-white border rounded-3 mt-3">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span class="fs-5 fw-bold">Combined Group Total:</span>
+                        <span class="fs-3 fw-bold text-success">₹{{ total_bill }}</span>
+                    </div>
+
+                    {% if is_host and group.status == 'OPEN' %}
+                    <a href="{% url 'group_orders:checkout_group_order' group.group_code %}" class="btn btn-sb-green w-100 py-2 fs-6 fw-bold">
+                        <i class="fa-solid fa-cart-check me-2"></i> Proceed to Group Checkout (Host Only)
+                    </a>
+                    {% elif group.status == 'PLACED' %}
+                    <div class="alert alert-success mb-0 text-center py-2">
+                        <i class="fa-solid fa-circle-check me-1"></i> This group order has been placed successfully by host!
+                    </div>
+                    {% else %}
+                    <small class="text-muted d-block text-center">Waiting for host to finalize and place the group order.</small>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Add Items From Restaurant Menu -->
+        <div class="col-lg-5">
+            <div class="card sb-card p-4">
+                <h5 class="fw-bold mb-3"><i class="fa-solid fa-utensils text-warning me-2"></i>Select Items for Your Plate</h5>
+                <p class="small text-muted mb-3">Browse {{ group.restaurant.name }}'s menu and add dishes to your individual portion.</p>
+
+                {% if group.status == 'OPEN' %}
+                <div class="d-flex flex-column gap-3" style="max-height: 520px; overflow-y: auto;">
+                    {% for food in menu_items %}
+                    <div class="p-3 bg-light rounded-3 border">
+                        <div class="d-flex justify-content-between align-items-start mb-1">
+                            <div>
+                                <span class="fw-bold small">{{ food.name }}</span>
+                                {% if food.is_veg %}
+                                <span class="diet-indicator veg ms-1"><span class="dot"></span></span>
+                                {% else %}
+                                <span class="diet-indicator nonveg ms-1"><span class="dot"></span></span>
+                                {% endif %}
+                            </div>
+                            <span class="fw-bold text-success">₹{{ food.price }}</span>
+                        </div>
+                        <p class="small text-muted mb-2 text-truncate">{{ food.description }}</p>
+
+                        <form method="post" action="{% url 'group_orders:add_item_to_group' group.group_code %}" class="d-flex gap-2 align-items-center">
+                            {% csrf_token %}
+                            <input type="hidden" name="food_id" value="{{ food.id }}">
+                            <input type="number" name="quantity" value="1" min="1" max="10" class="form-control form-control-sm text-center" style="width: 60px;">
+                            <input type="text" name="notes" placeholder="Notes (e.g. less spicy)" class="form-control form-control-sm">
+                            <button type="submit" class="btn btn-sb-orange btn-sm text-nowrap">
+                                <i class="fa-solid fa-plus me-1"></i> Add
+                            </button>
+                        </form>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="alert alert-secondary text-center">
+                    This group order is closed for changes.
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

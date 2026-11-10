@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+
+{% block title %}Campus Restaurants & Canteens - SmartBite{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4">
+        <div>
+            <h3 class="fw-bold mb-1">Campus Dining Partners</h3>
+            <p class="text-muted small mb-0">Order directly from verified food outlets and campus canteens</p>
+        </div>
+        <form method="get" class="d-flex gap-2 mt-2 mt-md-0">
+            <input type="text" name="q" value="{{ query }}" class="form-control" placeholder="Search restaurant name...">
+            <button type="submit" class="btn btn-sb-green">Search</button>
+        </form>
+    </div>
+
+    <!-- Cuisine Quick Badges -->
+    <div class="d-flex flex-wrap gap-2 mb-4">
+        <a href="{% url 'restaurants:restaurant_list' %}" class="btn btn-sm {% if not selected_cuisine %}btn-dark{% else %}btn-outline-secondary{% endif %}">All Cuisines</a>
+        {% for c in cuisines %}
+        <a href="?cuisine={{ c }}" class="btn btn-sm {% if selected_cuisine == c %}btn-dark{% else %}btn-outline-secondary{% endif %}">{{ c }}</a>
+        {% endfor %}
+    </div>
+
+    <div class="row g-4">
+        {% for r in restaurants %}
+        <div class="col-lg-4 col-md-6">
+            <div class="card sb-card h-100">
+                <img src="{{ r.image_url|default:'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=600' }}" alt="{{ r.name }}" class="card-img-top" style="height: 180px; object-fit: cover;">
+                <div class="card-body p-4 d-flex flex-column">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <h5 class="fw-bold mb-0">{{ r.name }}</h5>
+                        <span class="badge bg-success"><i class="fa-solid fa-star"></i> {{ r.rating }}</span>
+                    </div>
+                    <span class="badge bg-light text-dark border align-self-start mb-2">{{ r.cuisine_type }}</span>
+                    <p class="small text-muted mb-2 flex-grow-1">{{ r.description }}</p>
+                    <div class="small text-secondary mb-3">
+                        <div><i class="fa-solid fa-location-dot text-danger me-1"></i> {{ r.address }}</div>
+                        <div><i class="fa-solid fa-clock text-primary me-1"></i> {{ r.opening_time|time:"H:i" }} - {{ r.closing_time|time:"H:i" }}</div>
+                    </div>
+                    <div class="mt-auto d-flex justify-content-between align-items-center pt-2 border-top">
+                        <span class="small text-muted">{{ r.total_items }} Menu Items</span>
+                        <a href="{% url 'restaurants:restaurant_detail' r.id %}" class="btn btn-sb-orange btn-sm px-3">View Menu</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12 text-center py-5">
+            <h5>No restaurants found.</h5>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
+

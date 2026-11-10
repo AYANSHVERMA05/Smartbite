@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+
+{% block title %}My Profile - SmartBite{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card sb-card">
+                <div class="card-header bg-white py-3 border-bottom d-flex align-items-center justify-content-between">
+                    <div>
+                        <h4 class="fw-bold mb-0"><i class="fa-solid fa-user-gear text-primary me-2"></i>My Profile</h4>
+                        <small class="text-muted">Manage your personal settings and delivery address</small>
+                    </div>
+                    <span class="badge bg-success p-2">{{ user_obj.get_role_display }}</span>
+                </div>
+
+                <div class="card-body p-4">
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Username</label>
+                                <input type="text" class="form-control bg-light" value="{{ user_obj.username }}" disabled>
+                                <div class="form-text">Username cannot be changed.</div>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Account Role</label>
+                                <input type="text" class="form-control bg-light" value="{{ user_obj.get_role_display }}" disabled>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Email Address</label>
+                                {{ form.email }}
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Phone Number</label>
+                                {{ form.phone }}
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Hostel Block & Room</label>
+                                {{ form.hostel_block_room }}
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Preferred Dietary Choice</label>
+                                {{ form.preferred_diet }}
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Daily Food Budget Limit (₹)</label>
+                                {{ form.daily_budget_limit }}
+                                <div class="form-text">Used for Smart Budget Planner recommendations</div>
+                            </div>
+                            <div class="col-md-12">
+                                <label class="form-label fw-semibold">Default Delivery Address / Directions</label>
+                                {{ form.delivery_address }}
+                            </div>
+                        </div>
+
+                        <div class="mt-4 text-end">
+                            <a href="{% url 'accounts:dashboard_redirect' %}" class="btn btn-outline-secondary me-2">Back to Dashboard</a>
+                            <button type="submit" class="btn btn-sb-green px-4">
+                                <i class="fa-solid fa-floppy-disk me-1"></i> Save Changes
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

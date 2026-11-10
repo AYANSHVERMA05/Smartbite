@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+
+{% block title %}My Surplus Bookings - SmartBite{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h3 class="fw-bold mb-1"><i class="fa-solid fa-box-open text-warning me-2"></i>My Surplus Food Bookings</h3>
+            <p class="text-muted small mb-0">Show your unique pickup code at the counter to claim your meal</p>
+        </div>
+        <a href="{% url 'surplus_food:surplus_list' %}" class="btn btn-danger btn-sm">Find More Deals</a>
+    </div>
+
+    <div class="row g-3">
+        {% for b in bookings %}
+        <div class="col-md-6">
+            <div class="card sb-card p-3 border-start border-4 {% if b.status == 'CONFIRMED' %}border-warning{% elif b.status == 'PICKED_UP' %}border-success{% else %}border-secondary{% endif %}">
+                <div class="d-flex justify-content-between align-items-start mb-2">
+                    <div>
+                        <h5 class="fw-bold mb-0">{{ b.surplus_food.food_name }}</h5>
+                        <small class="text-muted">{{ b.surplus_food.restaurant.name }} &bull; {{ b.surplus_food.restaurant.address }}</small>
+                    </div>
+                    <span class="badge {% if b.status == 'CONFIRMED' %}bg-warning text-dark{% elif b.status == 'PICKED_UP' %}bg-success{% else %}bg-secondary{% endif %}">
+                        {{ b.get_status_display }}
+                    </span>
+                </div>
+
+                <div class="p-3 bg-light rounded text-center my-2 border">
+                    <small class="text-muted d-block fw-bold" style="font-size: 0.75rem;">SHOW CODE AT OUTLET COUNTER:</small>
+                    <span class="fs-3 fw-bold text-danger letter-spacing">{{ b.booking_code }}</span>
+                </div>
+
+                <div class="d-flex justify-content-between small text-secondary">
+                    <span>Qty: <strong>{{ b.quantity }} portions</strong></span>
+                    <span>Total Paid/Payable: <strong class="text-success">₹{{ b.total_price }}</strong></span>
+                    <span>Deadline: <strong>{{ b.surplus_food.pickup_deadline|date:"h:i A" }}</strong></span>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12 text-center py-5">
+            <h5>You haven't reserved any surplus food yet.</h5>
+            <p class="text-muted">Save up to 50% on campus meals and help prevent food waste!</p>
+            <a href="{% url 'surplus_food:surplus_list' %}" class="btn btn-outline-danger">Browse Surplus Food</a>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
+

@@ -1,0 +1,135 @@
+{% extends 'base.html' %}
+
+{% block title %}Order #{{ order.order_number }} - SmartBite{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-9">
+            <div class="card sb-card mb-4">
+                <div class="card-header bg-white py-3 border-bottom d-flex flex-wrap justify-content-between align-items-center">
+                    <div>
+                        <h4 class="fw-bold mb-0">Order #{{ order.order_number }}</h4>
+                        <small class="text-muted">Placed on {{ order.created_at|date:"d M Y, h:i A" }}</small>
+                    </div>
+                    <span class="badge {{ order.status_badge_class }} fs-6 px-3 py-2">
+                        {{ order.get_order_status_display }}
+                    </span>
+                </div>
+
+                <div class="card-body p-4">
+                    <!-- Visual Status Tracker Pipeline -->
+                    <div class="mb-5 px-md-4">
+                        <div class="row text-center position-relative">
+                            <div class="col-3">
+                                <div class="rounded-circle d-inline-flex align-items-center justify-content-center mb-2 {% if order.order_status in 'PENDING PREPARING OUT_FOR_DELIVERY DELIVERED' %}bg-success text-white{% else %}bg-light text-muted border{% endif %}" style="width: 44px; height: 44px;">
+                                    <i class="fa-solid fa-receipt"></i>
+                                </div>
+                                <div class="small fw-bold">Placed</div>
+                            </div>
+                            <div class="col-3">
+                                <div class="rounded-circle d-inline-flex align-items-center justify-content-center mb-2 {% if order.order_status in 'PREPARING OUT_FOR_DELIVERY DELIVERED' %}bg-success text-white{% else %}bg-light text-muted border{% endif %}" style="width: 44px; height: 44px;">
+                                    <i class="fa-solid fa-kitchen-set"></i>
+                                </div>
+                                <div class="small fw-bold">Kitchen</div>
+                            </div>
+                            <div class="col-3">
+                                <div class="rounded-circle d-inline-flex align-items-center justify-content-center mb-2 {% if order.order_status in 'OUT_FOR_DELIVERY DELIVERED' %}bg-success text-white{% else %}bg-light text-muted border{% endif %}" style="width: 44px; height: 44px;">
+                                    <i class="fa-solid fa-person-biking"></i>
+                                </div>
+                                <div class="small fw-bold">On the Way</div>
+                            </div>
+                            <div class="col-3">
+                                <div class="rounded-circle d-inline-flex align-items-center justify-content-center mb-2 {% if order.order_status == 'DELIVERED' %}bg-success text-white{% else %}bg-light text-muted border{% endif %}" style="width: 44px; height: 44px;">
+                                    <i class="fa-solid fa-circle-check"></i>
+                                </div>
+                                <div class="small fw-bold">Delivered</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- If Owner or Admin, provide status control buttons -->
+                    {% if user.is_restaurant_owner or user.is_admin_user %}
+                    <div class="p-3 bg-light rounded-3 mb-4 border">
+                        <div class="d-flex flex-wrap justify-content-between align-items-center">
+                            <span class="fw-bold small text-dark"><i class="fa-solid fa-sliders text-primary me-1"></i> Kitchen Order Status Controls:</span>
+                            <form method="post" action="{% url 'orders:update_order_status' order.id %}" class="d-flex gap-2 mt-2 mt-md-0">
+                                {% csrf_token %}
+                                <select name="status" class="form-select form-select-sm">
+                                    <option value="PENDING" {% if order.order_status == 'PENDING' %}selected{% endif %}>Order Placed (Pending)</option>
+                                    <option value="PREPARING" {% if order.order_status == 'PREPARING' %}selected{% endif %}>Kitchen Preparing</option>
+                                    <option value="OUT_FOR_DELIVERY" {% if order.order_status == 'OUT_FOR_DELIVERY' %}selected{% endif %}>Out for Delivery</option>
+                                    <option value="DELIVERED" {% if order.order_status == 'DELIVERED' %}selected{% endif %}>Delivered</option>
+                                    <option value="CANCELLED" {% if order.order_status == 'CANCELLED' %}selected{% endif %}>Cancelled</option>
+                                </select>
+                                <button type="submit" class="btn btn-primary btn-sm">Update Status</button>
+                            </form>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <!-- Order Details -->
+                    <div class="row g-4 mb-4">
+                        <div class="col-md-6">
+                            <h6 class="fw-bold text-muted small text-uppercase mb-2">Delivery Details</h6>
+                            <div class="p-3 bg-light rounded border">
+                                <div><strong>Customer:</strong> {{ order.user.username }}</div>
+                                <div><strong>Phone:</strong> {{ order.contact_phone }}</div>
+                                <div><strong>Address:</strong> {{ order.delivery_address }}</div>
+                                {% if order.special_instructions %}
+                                <div class="mt-1 text-muted small"><strong>Notes:</strong> {{ order.special_instructions }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <h6 class="fw-bold text-muted small text-uppercase mb-2">Payment Info</h6>
+                            <div class="p-3 bg-light rounded border">
+                                <div><strong>Payment Method:</strong> {{ order.get_payment_method_display }}</div>
+                                <div><strong>Status:</strong> <span class="badge {% if order.payment_status == 'PAID' %}bg-success{% else %}bg-warning text-dark{% endif %}">{{ order.payment_status }}</span></div>
+                                <div><strong>Restaurant:</strong> {{ order.restaurant.name }}</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Items Table -->
+                    <h6 class="fw-bold text-muted small text-uppercase mb-2">Items Ordered</h6>
+                    <div class="table-responsive">
+                        <table class="table align-middle">
+                            <thead class="table-light small">
+                                <tr>
+                                    <th>Item</th>
+                                    <th>Unit Price</th>
+                                    <th>Quantity</th>
+                                    <th class="text-end">Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for item in order.items.all %}
+                                <tr>
+                                    <td class="fw-semibold">{{ item.food_name }}</td>
+                                    <td>₹{{ item.price }}</td>
+                                    <td>{{ item.quantity }}</td>
+                                    <td class="text-end fw-bold">₹{{ item.item_total }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                            <tfoot class="table-light">
+                                <tr>
+                                    <td colspan="3" class="fw-bold text-end">Grand Total (COD):</td>
+                                    <td class="text-end fw-bold fs-5 text-success">₹{{ order.total_amount }}</td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+
+                    <div class="mt-4 text-end">
+                        <a href="{% url 'orders:order_history' %}" class="btn btn-outline-secondary">Back to Order History</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
