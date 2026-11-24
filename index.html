@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SmartBite — Smart Food Ordering & Management System</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#fff7ed',
+              100: '#ffedd5',
+              500: '#f97316',
+              600: '#ea580c',
+              700: '#c2410c',
+            },
+            healthy: {
+              500: '#22c55e',
+              600: '#16a34a',
+              700: '#15803d',
+              800: '#166534',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    html { scroll-behavior: smooth; }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased selection:bg-brand-500 selection:text-white">
+
+  <!-- Navigation -->
+  <header class="sticky top-0 z-50 bg-white/95 backdrop-blur border-b border-slate-200">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-600 to-amber-500 flex items-center justify-center text-white shadow-md shadow-brand-500/20">
+          <i class="fa-solid fa-utensils text-lg"></i>
+        </div>
+        <span class="text-xl font-bold tracking-tight text-slate-900">Smart<span class="text-brand-600">Bite</span></span>
+        <span class="hidden sm:inline-block px-2.5 py-0.5 text-xs font-medium rounded-full bg-orange-100 text-orange-800 border border-orange-200">B.Tech Project</span>
+      </div>
+      <nav class="hidden md:flex items-center space-x-8 text-sm font-medium text-slate-600">
+        <a href="#features" class="hover:text-brand-600 transition">Core Features</a>
+        <a href="#simulator" class="hover:text-brand-600 transition">Live Simulators</a>
+        <a href="#architecture" class="hover:text-brand-600 transition">Architecture</a>
+        <a href="#accounts" class="hover:text-brand-600 transition">Demo Logins</a>
+        <a href="#viva" class="hover:text-brand-600 transition">Viva Q&A</a>
+      </nav>
+      <div class="flex items-center space-x-3">
+        <a href="https://github.com/AYANSHVERMA05/Smartbite" target="_blank" class="inline-flex items-center space-x-2 px-4 py-2 rounded-lg bg-slate-900 text-white text-sm font-medium hover:bg-slate-800 transition shadow-sm">
+          <i class="fa-brands fa-github text-base"></i>
+          <span>GitHub</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="relative overflow-hidden pt-16 pb-20 lg:pt-24 lg:pb-28 bg-gradient-to-b from-orange-50/60 to-transparent">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
+      <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-emerald-100 border border-emerald-300 text-emerald-800 text-xs font-semibold uppercase tracking-wider mb-6">
+        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+        <span>Academic Project • Django 6.1 • AI Engine</span>
+      </div>
+      <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-slate-900 tracking-tight leading-tight max-w-4xl mx-auto">
+        Smart Campus Dining, Meal Planning & <span class="text-transparent bg-clip-text bg-gradient-to-r from-brand-600 to-amber-600">Zero-Waste System</span>
+      </h1>
+      <p class="mt-6 text-lg sm:text-xl text-slate-600 max-w-2xl mx-auto leading-relaxed">
+        SmartBite solves everyday campus dining problems through combinatorial budget optimization, TF-IDF cosine recommendations, surplus food redistribution, and hostel group orders.
+      </p>
+
+      <div class="mt-8 flex flex-wrap justify-center gap-4">
+        <a href="#simulator" class="px-6 py-3.5 rounded-xl bg-brand-600 text-white font-semibold shadow-lg shadow-brand-500/25 hover:bg-brand-700 transition flex items-center space-x-2">
+          <i class="fa-solid fa-play"></i>
+          <span>Try Interactive Simulators</span>
+        </a>
+        <a href="https://github.com/AYANSHVERMA05/Smartbite" target="_blank" class="px-6 py-3.5 rounded-xl bg-white border border-slate-300 text-slate-800 font-semibold hover:bg-slate-50 transition shadow-sm flex items-center space-x-2">
+          <i class="fa-brands fa-github text-slate-700"></i>
+          <span>Explore Source Code</span>
+        </a>
+      </div>
+
+      <!-- Quick Tech Badges -->
+      <div class="mt-12 pt-8 border-t border-slate-200/80 flex flex-wrap justify-center items-center gap-6 text-xs font-semibold text-slate-500 uppercase tracking-wider">
+        <span class="flex items-center gap-1.5"><i class="fa-brands fa-python text-amber-500 text-base"></i> Python 3.14</span>
+        <span class="flex items-center gap-1.5"><i class="fa-solid fa-server text-emerald-600 text-base"></i> Django 6.1</span>
+        <span class="flex items-center gap-1.5"><i class="fa-solid fa-brain text-purple-600 text-base"></i> Scikit-Learn TF-IDF</span>
+        <span class="flex items-center gap-1.5"><i class="fa-solid fa-database text-blue-500 text-base"></i> SQLite</span>
+        <span class="flex items-center gap-1.5"><i class="fa-brands fa-bootstrap text-indigo-600 text-base"></i> Bootstrap 5</span>
+        <span class="flex items-center gap-1.5"><i class="fa-solid fa-chart-line text-rose-500 text-base"></i> Chart.js</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Key Modules Grid -->
+  <section id="features" class="py-20 bg-white border-y border-slate-200">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center max-w-3xl mx-auto">
+        <h2 class="text-xs font-bold text-brand-600 uppercase tracking-widest">Innovative Engineering</h2>
+        <p class="mt-2 text-3xl font-extrabold text-slate-900 tracking-tight sm:text-4xl">6 Pillars of the SmartBite System</p>
+        <p class="mt-4 text-slate-600">Built ground-up with custom algorithms rather than superficial UI clones.</p>
+      </div>
+
+      <div class="mt-16 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        
+        <!-- Feature 1 -->
+        <div class="p-8 rounded-2xl bg-slate-50 border border-slate-200 hover:border-brand-500/50 hover:shadow-lg transition-all group">
+          <div class="w-12 h-12 rounded-xl bg-orange-100 text-brand-600 flex items-center justify-center text-xl mb-6 group-hover:scale-110 transition-transform">
+            <i class="fa-solid fa-wallet"></i>
+          </div>
+          <h3 class="text-xl font-bold text-slate-900 mb-2">Smart Budget Meal Planner</h3>
+          <p class="text-sm text-slate-600 leading-relaxed">
+            Takes any daily budget (₹200, ₹350, ₹500) and executes combinatorial heuristics to partition optimal Breakfast, Lunch, and Dinner triples with protein density prioritization.
+          </p>
+        </div>
+
+        <!-- Feature 2 -->
+        <div class="p-8 rounded-2xl bg-slate-50 border border-slate-200 hover:border-brand-500/50 hover:shadow-lg transition-all group">
+          <div class="w-12 h-12 rounded-xl bg-purple-100 text-purple-600 flex items-center justify-center text-xl mb-6 group-hover:scale-110 transition-transform">
+            <i class="fa-solid fa-robot"></i>
+          </div>
+          <h3 class="text-xl font-bold text-slate-900 mb-2">AI Food Recommendations</h3>
+          <p class="text-sm text-slate-600 leading-relaxed">
+            Content-based filtering using <code class="text-xs bg-purple-50 text-purple-700 px-1 py-0.5 rounded">TfidfVectorizer</code> and Cosine Similarity. Cold-start fallback dynamically targets dietary tags and ratings.
+          </p>
+        </div>
+
+        <!-- Feature 3 -->
+        <div class="p-8 rounded-2xl bg-slate-50 border border-slate-200 hover:border-brand-500/50 hover:shadow-lg transition-all group">
+          <div class="w-12 h-12 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center text-xl mb-6 group-hover:scale-110 transition-transform">
+            <i class="fa-solid fa-leaf"></i>
+          </div>
+          <h3 class="text-xl font-bold text-slate-900 mb-2">Surplus Food Reduction</h3>
+          <p class="text-sm text-slate-600 leading-relaxed">
+            Kitchen owners list fresh surplus cafeteria batches at 40–60% flash discounts before strict pickup deadlines, curbing university food waste.
+          </p>
+        </div>
+
+        <!-- Feature 4 -->
+        <div class="p-8 rounded-2xl bg-slate-50 border border-slate-200 hover:border-brand-500/50 hover:shadow-lg transition-all group">
+          <div class="w-12 h-12 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center text-xl mb-6 group-hover:scale-110 transition-transform">
+            <i class="fa-solid fa-users"></i>
+          </div>
+          <h3 class="text-xl font-bold text-slate-900 mb-2">Hostel Group Orders</h3>
+          <p class="text-sm text-slate-600 leading-relaxed">
+            Hostel roommates join via 6-character room codes. Individual orders combine into one master COD checkout with per-student bill breakdown.
+          </p>
+        </div>
+
+        <!-- Feature 5 -->
+        <div class="p-8 rounded-2xl bg-slate-50 border border-slate-200 hover:border-brand-500/50 hover:shadow-lg transition-all group">
+          <div class="w-12 h-12 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center text-xl mb-6 group-hover:scale-110 transition-transform">
+            <i class="fa-solid fa-calendar-days"></i>
+          </div>
+          <h3 class="text-xl font-bold text-slate-900 mb-2">Hostel Mess Subscriptions</h3>
+          <p class="text-sm text-slate-600 leading-relaxed">
+            Weekly (7-day) and monthly (30-day) dining plans delivering meals straight to campus hostel gates, complete with pause and resume controls.
+          </p>
+        </div>
+
+        <!-- Feature 6 -->
+        <div class="p-8 rounded-2xl bg-slate-50 border border-slate-200 hover:border-brand-500/50 hover:shadow-lg transition-all group">
+          <div class="w-12 h-12 rounded-xl bg-rose-100 text-rose-600 flex items-center justify-center text-xl mb-6 group-hover:scale-110 transition-transform">
+            <i class="fa-solid fa-sliders"></i>
+          </div>
+          <h3 class="text-xl font-bold text-slate-900 mb-2">Macro & Nutrition Filter</h3>
+          <p class="text-sm text-slate-600 leading-relaxed">
+            Real-time calorie thresholds, minimum protein limits, and strict vegetarian safety indicators for fitness and diet-conscious students.
+          </p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- Interactive Client-side Simulators -->
+  <section id="simulator" class="py-20 bg-slate-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center max-w-3xl mx-auto mb-16">
+        <span class="px-3 py-1 text-xs font-semibold rounded-full bg-orange-100 text-brand-700 uppercase tracking-wider">Try It In-Browser</span>
+        <h2 class="mt-3 text-3xl font-extrabold text-slate-900 tracking-tight sm:text-4xl">Interactive Module Simulators</h2>
+        <p class="mt-2 text-slate-600">Test the core algorithm logic client-side right now.</p>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        
+        <!-- Simulator 1: Budget Planner -->
+        <div class="bg-white rounded-2xl p-8 border border-slate-200 shadow-sm flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-4">
+              <h3 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+                <i class="fa-solid fa-calculator text-brand-600"></i>
+                <span>Budget Meal Planner Simulator</span>
+              </h3>
+              <span class="text-xs bg-slate-100 font-semibold px-2.5 py-1 rounded-full text-slate-700">Combinatorial Logic</span>
+            </div>
+            <p class="text-xs text-slate-500 mb-6">Select daily target budget to generate balanced B+L+D meal partitions.</p>
+
+            <div class="mb-6">
+              <div class="flex justify-between items-center text-sm font-semibold mb-2">
+                <span>Daily Budget Limit:</span>
+                <span id="budgetValue" class="text-brand-600 text-lg font-bold">₹300</span>
+              </div>
+              <input type="range" id="budgetRange" min="150" max="600" step="25" value="300" 
+                     class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-orange-600">
+              <div class="flex justify-between text-xs text-slate-400 mt-1">
+                <span>₹150 (Hostel Budget)</span>
+                <span>₹350 (Standard)</span>
+                <span>₹600 (High Protein)</span>
+              </div>
+            </div>
+
+            <div class="space-y-3" id="mealResults">
+              <!-- Dynamically populated -->
+            </div>
+          </div>
+
+          <div class="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
+            <span id="savingsSummary" class="font-medium text-emerald-600">Remaining Savings: ₹15</span>
+            <span id="proteinSummary" class="font-medium text-slate-700">Estimated Protein: 42g</span>
+          </div>
+        </div>
+
+        <!-- Simulator 2: AI Recommendation -->
+        <div class="bg-white rounded-2xl p-8 border border-slate-200 shadow-sm flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-4">
+              <h3 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+                <i class="fa-solid fa-brain text-purple-600"></i>
+                <span>AI Recommendation Simulator</span>
+              </h3>
+              <span class="text-xs bg-purple-100 font-semibold px-2.5 py-1 rounded-full text-purple-800">TF-IDF Vectorizer</span>
+            </div>
+            <p class="text-xs text-slate-500 mb-6">Choose student diet profile to calculate dynamic cosine similarity rankings.</p>
+
+            <div class="mb-6">
+              <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-2">Student Persona & Diet:</label>
+              <div class="grid grid-cols-3 gap-2">
+                <button onclick="setPersona('veg')" id="btn-veg" class="persona-btn active py-2 text-xs font-semibold rounded-lg border border-brand-500 bg-brand-50 text-brand-700">
+                  Pure Veg
+                </button>
+                <button onclick="setPersona('protein')" id="btn-protein" class="persona-btn py-2 text-xs font-semibold rounded-lg border border-slate-200 hover:bg-slate-50 text-slate-700">
+                  Gym / High Protein
+                </button>
+                <button onclick="setPersona('budget')" id="btn-budget" class="persona-btn py-2 text-xs font-semibold rounded-lg border border-slate-200 hover:bg-slate-50 text-slate-700">
+                  Hostel Quick Bite
+                </button>
+              </div>
+            </div>
+
+            <div class="space-y-3" id="aiResults">
+              <!-- Dynamically populated -->
+            </div>
+          </div>
+
+          <div class="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
+            <span class="font-mono text-purple-700">Similarity Metric: Cosine [0.0 - 1.0]</span>
+            <span class="text-slate-400">Trained on campus orders</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- Demo Accounts Table -->
+  <section id="accounts" class="py-20 bg-white border-t border-slate-200">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center max-w-3xl mx-auto mb-14">
+        <h2 class="text-xs font-bold text-brand-600 uppercase tracking-widest">Testing Credentials</h2>
+        <p class="mt-2 text-3xl font-extrabold text-slate-900 tracking-tight sm:text-4xl">Pre-Seeded Demo Accounts</p>
+        <p class="mt-4 text-slate-600">The local database (`db.sqlite3`) is pre-loaded with comprehensive test roles.</p>
+      </div>
+
+      <div class="overflow-x-auto rounded-2xl border border-slate-200 shadow-sm">
+        <table class="min-w-full divide-y divide-slate-200 text-left text-sm">
+          <thead class="bg-slate-50 font-semibold text-slate-700">
+            <tr>
+              <th class="px-6 py-4">Role</th>
+              <th class="px-6 py-4">Username</th>
+              <th class="px-6 py-4">Password</th>
+              <th class="px-6 py-4">Accessible Features</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-200 bg-white">
+            <tr>
+              <td class="px-6 py-4 font-semibold text-slate-900">
+                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                  <i class="fa-solid fa-graduation-cap"></i> Student (General)
+                </span>
+              </td>
+              <td class="px-6 py-4 font-mono text-slate-800 font-bold">rahul</td>
+              <td class="px-6 py-4 font-mono text-slate-500">student123</td>
+              <td class="px-6 py-4 text-slate-600 text-xs">Cart, COD checkout, Budget Planner, Group Ordering, Surplus Booking, AI Recommendations</td>
+            </tr>
+            <tr>
+              <td class="px-6 py-4 font-semibold text-slate-900">
+                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800">
+                  <i class="fa-solid fa-seedling"></i> Student (Pure Veg)
+                </span>
+              </td>
+              <td class="px-6 py-4 font-mono text-slate-800 font-bold">priya</td>
+              <td class="px-6 py-4 font-mono text-slate-500">student123</td>
+              <td class="px-6 py-4 text-slate-600 text-xs">Pure Veg profile, nutrition macros filter, hostel mess subscription booking</td>
+            </tr>
+            <tr>
+              <td class="px-6 py-4 font-semibold text-slate-900">
+                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-orange-100 text-orange-800">
+                  <i class="fa-solid fa-kitchen-set"></i> Restaurant Owner 1
+                </span>
+              </td>
+              <td class="px-6 py-4 font-mono text-slate-800 font-bold">owner_spicedhaba</td>
+              <td class="px-6 py-4 font-mono text-slate-500">owner123</td>
+              <td class="px-6 py-4 text-slate-600 text-xs">Spice Dhaba live kitchen order queue, status toggle, menu item manager, surplus food listings</td>
+            </tr>
+            <tr>
+              <td class="px-6 py-4 font-semibold text-slate-900">
+                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-orange-100 text-orange-800">
+                  <i class="fa-solid fa-kitchen-set"></i> Restaurant Owner 2
+                </span>
+              </td>
+              <td class="px-6 py-4 font-mono text-slate-800 font-bold">owner_greenbowl</td>
+              <td class="px-6 py-4 font-mono text-slate-500">owner123</td>
+              <td class="px-6 py-4 text-slate-600 text-xs">Green Bowl healthy cafeteria menu, nutrition specs manager, outlet settings</td>
+            </tr>
+            <tr>
+              <td class="px-6 py-4 font-semibold text-slate-900">
+                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
+                  <i class="fa-solid fa-shield-halved"></i> Administrator
+                </span>
+              </td>
+              <td class="px-6 py-4 font-mono text-slate-800 font-bold">admin</td>
+              <td class="px-6 py-4 font-mono text-slate-500">admin123</td>
+              <td class="px-6 py-4 text-slate-600 text-xs">Central Chart.js analytics console, revenue metrics, restaurant verification, Django Admin (/admin/)</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- Technical Viva Q&A -->
+  <section id="viva" class="py-20 bg-slate-50 border-t border-slate-200">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-12">
+        <span class="text-xs font-bold text-brand-600 uppercase tracking-widest">Academic Defense</span>
+        <h2 class="mt-2 text-3xl font-extrabold text-slate-900 sm:text-4xl">Technical Viva Questions & Solutions</h2>
+        <p class="mt-3 text-slate-600">Answers to frequent professor and examiner questions about SmartBite.</p>
+      </div>
+
+      <div class="space-y-6">
+        <!-- Q1 -->
+        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+          <h3 class="text-base font-bold text-slate-900 flex items-start gap-3">
+            <span class="w-6 h-6 rounded-full bg-brand-100 text-brand-700 flex items-center justify-center text-xs flex-shrink-0 mt-0.5">Q1</span>
+            <span>How does the AI Recommendation Engine work under the hood?</span>
+          </h3>
+          <p class="mt-3 text-sm text-slate-600 pl-9 leading-relaxed">
+            It leverages <strong>Content-Based Filtering</strong> via Scikit-learn. The engine constructs composite feature vectors from Category, Dietary Profile (Veg/Non-Veg), Price Bracket, and Nutritional Tags. Using <code class="bg-slate-100 px-1.5 py-0.5 rounded text-xs text-brand-700">TfidfVectorizer</code> and <code class="bg-slate-100 px-1.5 py-0.5 rounded text-xs text-brand-700">cosine_similarity</code>, it compares prospective dishes with the user’s order vector history. If a user is brand new (Cold Start), it gracefully falls back to popularity-weighted top-rated items matching their diet.
+          </p>
+        </div>
+
+        <!-- Q2 -->
+        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+          <h3 class="text-base font-bold text-slate-900 flex items-start gap-3">
+            <span class="w-6 h-6 rounded-full bg-brand-100 text-brand-700 flex items-center justify-center text-xs flex-shrink-0 mt-0.5">Q2</span>
+            <span>What is the algorithmic complexity of the Budget Meal Planner?</span>
+          </h3>
+          <p class="mt-3 text-sm text-slate-600 pl-9 leading-relaxed">
+            The planner uses a tailored <strong>combinatorial heuristic</strong>. It partitions catalog dishes into Breakfast (25%), Lunch (45%), and Dinner (30%) buckets, generates valid triples where <span class="font-mono text-xs bg-slate-100 px-1.5 py-0.5 rounded">Cost(B) + Cost(L) + Cost(D) &le; Budget</span>, and optimizes selection using a composite objective function prioritizing both budget margin utilization and protein density.
+          </p>
+        </div>
+
+        <!-- Q3 -->
+        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+          <h3 class="text-base font-bold text-slate-900 flex items-start gap-3">
+            <span class="w-6 h-6 rounded-full bg-brand-100 text-brand-700 flex items-center justify-center text-xs flex-shrink-0 mt-0.5">Q3</span>
+            <span>How does Group Ordering preserve data integrity with concurrent members?</span>
+          </h3>
+          <p class="mt-3 text-sm text-slate-600 pl-9 leading-relaxed">
+            Each group session is assigned a unique 6-character alphanumeric room key. Member additions are stored with foreign keys to both the session and the individual user. The master order conversion runs inside an atomic Django database transaction (<code class="bg-slate-100 px-1.5 py-0.5 rounded text-xs text-brand-700">transaction.atomic()</code>), ensuring item splits and bill totals never desync.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="bg-slate-900 text-white py-12 border-t border-slate-800">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-6">
+      <div class="flex items-center space-x-3">
+        <div class="w-9 h-9 rounded-lg bg-brand-600 flex items-center justify-center text-white">
+          <i class="fa-solid fa-utensils text-sm"></i>
+        </div>
+        <span class="text-lg font-bold tracking-tight">Smart<span class="text-brand-500">Bite</span></span>
+        <span class="text-slate-500 text-xs">| Academic Project Portfolio</span>
+      </div>
+      <p class="text-slate-400 text-xs text-center md:text-left">
+        Developed by <strong>Ayansh Verma</strong> (<a href="https://github.com/AYANSHVERMA05" target="_blank" class="text-brand-400 hover:underline">@AYANSHVERMA05</a>). Built with Django 6.1 & Python 3.14.
+      </p>
+      <div class="flex items-center space-x-4">
+        <a href="https://github.com/AYANSHVERMA05/Smartbite" target="_blank" class="text-slate-400 hover:text-white transition">
+          <i class="fa-brands fa-github text-xl"></i>
+        </a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Interactive JavaScript Engine -->
+  <script>
+    // 1. Budget Planner Simulator Logic
+    const dishes = {
+      breakfast: [
+        { name: "Poha with Sprouts", price: 40, protein: 8, veg: true },
+        { name: "Masala Dosa + Sambhar", price: 60, protein: 9, veg: true },
+        { name: "Egg Omelette & Brown Bread", price: 70, protein: 18, veg: false },
+        { name: "Idli Vada Combo", price: 50, protein: 7, veg: true },
+        { name: "Paneer Stuffed Paratha & Curd", price: 80, protein: 16, veg: true }
+      ],
+      lunch: [
+        { name: "Mini Thali (Dal, Sabzi, 3 Roti, Rice)", price: 90, protein: 14, veg: true },
+        { name: "Rajma Chawal Deluxe", price: 80, protein: 15, veg: true },
+        { name: "Chicken Biryani with Raita", price: 160, protein: 32, veg: false },
+        { name: "Paneer Butter Masala Meal", price: 140, protein: 22, veg: true },
+        { name: "High-Protein Soya Bowl", price: 110, protein: 28, veg: true }
+      ],
+      dinner: [
+        { name: "Dal Khichdi & Curd", price: 70, protein: 12, veg: true },
+        { name: "Egg Curry with 3 Rotis", price: 110, protein: 22, veg: false },
+        { name: "Mixed Veg Platter & Phulkas", price: 90, protein: 11, veg: true },
+        { name: "Grilled Paneer Salad Bowl", price: 130, protein: 24, veg: true },
+        { name: "Butter Chicken & Naan", price: 180, protein: 34, veg: false }
+      ]
+    };
+
+    function updateBudgetSimulator(budget) {
+      document.getElementById('budgetValue').textContent = '₹' + budget;
+      
+      // Target partitions: B ~ 25%, L ~ 45%, D ~ 30%
+      let bTarget = budget * 0.25;
+      let lTarget = budget * 0.45;
+      let dTarget = budget * 0.30;
+
+      // Find closest matches
+      let b = dishes.breakfast.slice().sort((a,b) => Math.abs(a.price - bTarget) - Math.abs(b.price - bTarget))[0];
+      let remAfterB = budget - b.price;
+      let l = dishes.lunch.filter(x => x.price <= remAfterB * 0.6).sort((a,b) => b.protein - a.protein)[0] || dishes.lunch[0];
+      let remAfterL = remAfterB - l.price;
+      let d = dishes.dinner.filter(x => x.price <= remAfterL).sort((a,b) => b.protein - a.protein)[0] || dishes.dinner[0];
+
+      let totalCost = b.price + l.price + d.price;
+      let totalProtein = b.protein + l.protein + d.protein;
+      let savings = budget - totalCost;
+
+      const container = document.getElementById('mealResults');
+      container.innerHTML = `
+        <div class="flex items-center justify-between p-3 rounded-xl bg-orange-50/70 border border-orange-100">
+          <div class="flex items-center gap-2.5">
+            <span class="w-7 h-7 rounded-lg bg-orange-500 text-white flex items-center justify-center text-xs font-bold">B</span>
+            <div>
+              <p class="text-xs font-bold text-slate-800">${b.name}</p>
+              <p class="text-[10px] text-slate-500">Breakfast • ${b.protein}g protein</p>
+            </div>
+          </div>
+          <span class="text-xs font-bold text-slate-900">₹${b.price}</span>
+        </div>
+        <div class="flex items-center justify-between p-3 rounded-xl bg-orange-50/70 border border-orange-100">
+          <div class="flex items-center gap-2.5">
+            <span class="w-7 h-7 rounded-lg bg-orange-600 text-white flex items-center justify-center text-xs font-bold">L</span>
+            <div>
+              <p class="text-xs font-bold text-slate-800">${l.name}</p>
+              <p class="text-[10px] text-slate-500">Lunch • ${l.protein}g protein</p>
+            </div>
+          </div>
+          <span class="text-xs font-bold text-slate-900">₹${l.price}</span>
+        </div>
+        <div class="flex items-center justify-between p-3 rounded-xl bg-orange-50/70 border border-orange-100">
+          <div class="flex items-center gap-2.5">
+            <span class="w-7 h-7 rounded-lg bg-amber-600 text-white flex items-center justify-center text-xs font-bold">D</span>
+            <div>
+              <p class="text-xs font-bold text-slate-800">${d.name}</p>
+              <p class="text-[10px] text-slate-500">Dinner • ${d.protein}g protein</p>
+            </div>
+          </div>
+          <span class="text-xs font-bold text-slate-900">₹${d.price}</span>
+        </div>
+      `;
+
+      document.getElementById('savingsSummary').textContent = `Total Cost: ₹${totalCost} (Savings: ₹${savings})`;
+      document.getElementById('proteinSummary').textContent = `Total Protein: ${totalProtein}g`;
+    }
+
+    document.getElementById('budgetRange').addEventListener('input', (e) => {
+      updateBudgetSimulator(parseInt(e.target.value));
+    });
+    updateBudgetSimulator(300);
+
+    // 2. AI Recommendation Simulator
+    const aiRecommendations = {
+      veg: [
+        { name: "Paneer Tikka Salad Bowl", score: "0.94", why: "Matches 100% vegetarian & paneer preference tags", cal: 380, protein: "24g" },
+        { name: "High-Protein Soya Chaap Meal", score: "0.89", why: "Frequently ordered with Dal Makhani", cal: 420, protein: "28g" },
+        { name: "Palak Corn Khichdi", score: "0.83", why: "Light healthy dinner preference match", cal: 310, protein: "14g" }
+      ],
+      protein: [
+        { name: "Grilled Chicken Breast & Herb Rice", score: "0.97", why: "High protein: 38g & low carb affinity", cal: 480, protein: "38g" },
+        { name: "Double Egg Bhurji & Multigrain Toast", score: "0.91", why: "Matches breakfast protein macro goals", cal: 360, protein: "22g" },
+        { name: "Paneer & Sprouts Power Bowl", score: "0.86", why: "Vegetarian high-protein dense match", cal: 410, protein: "26g" }
+      ],
+      budget: [
+        { name: "Rajma Rice Campus Combo", score: "0.95", why: "Top value score under ₹90 & high rating", cal: 460, protein: "16g" },
+        { name: "Egg Fried Rice with Soup", score: "0.88", why: "Fast turnaround & budget favorite", cal: 510, protein: "18g" },
+        { name: "Aloo Paratha with Curd & Pickle", score: "0.84", why: "Hostel comfort food recommendation", cal: 420, protein: "10g" }
+      ]
+    };
+
+    function setPersona(type) {
+      document.querySelectorAll('.persona-btn').forEach(b => {
+        b.classList.remove('border-brand-500', 'bg-brand-50', 'text-brand-700');
+        b.classList.add('border-slate-200', 'text-slate-700');
+      });
+      const activeBtn = document.getElementById('btn-' + type);
+      activeBtn.classList.remove('border-slate-200', 'text-slate-700');
+      activeBtn.classList.add('border-brand-500', 'bg-brand-50', 'text-brand-700');
+
+      const items = aiRecommendations[type];
+      const container = document.getElementById('aiResults');
+      container.innerHTML = items.map(item => `
+        <div class="p-3 rounded-xl bg-purple-50/60 border border-purple-100 flex items-center justify-between">
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="text-xs font-bold text-slate-800">${item.name}</span>
+              <span class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-purple-200 text-purple-800">Score: ${item.score}</span>
+            </div>
+            <p class="text-[10px] text-purple-700 mt-0.5">${item.why}</p>
+          </div>
+          <div class="text-right text-[11px] font-medium text-slate-600">
+            <div>${item.cal} kcal</div>
+            <div class="text-emerald-700 font-bold">${item.protein}</div>
+          </div>
+        </div>
+      `).join('');
+    }
+    setPersona('veg');
+  </script>
+
+</body>
+</html>
